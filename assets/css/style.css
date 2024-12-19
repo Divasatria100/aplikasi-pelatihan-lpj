@@ -1,0 +1,1111 @@
+/* Reset default styles - Menghapus semua default styling dari browser */
+* {
+    margin: 0;                          /* Menghilangkan margin */
+    padding: 0;                         /* Menghilangkan padding */
+    box-sizing: border-box;            /* Mengatur box model agar lebih konsisten */
+    outline: none;                     /* Menghilangkan outline */
+    font-family: "poppins", sans-serif; /* Mengatur font default */
+}
+
+/* Base styles - Gaya dasar untuk elemen umum */
+body {
+    background-color: #f4f4f4;         /* Warna latar belakang halaman */
+}
+
+h2 {
+    font: 18px;                        /* Ukuran font heading 2 */
+    padding: 15px 0;                   /* Padding atas dan bawah */
+}
+
+h2>span {
+    font-size: 14px;                   /* Ukuran font untuk span di dalam h2 */
+}
+
+h3 {
+    color: #797979;                    /* Warna teks h3 */
+    text-shadow: 1px 1px 30px rgba(255, 255, 255, 0.7);  /* Efek bayangan teks */
+}
+
+/* Navigation bar styles - Gaya untuk navbar */
+.navbar {
+    display: flex;                     /* Menggunakan flexbox */
+    position: fixed;                   /* Posisi tetap di atas */
+    justify-content: space-between;    /* Mengatur jarak antar elemen */
+    align-items: center;               /* Perataan vertikal tengah */
+    width: 100%;                       /* Lebar penuh */
+    height: 55px;                      /* Tinggi navbar */
+    top: 0;                           /* Posisi atas */
+    left: 0;                          /* Posisi kiri */
+    background-color: #fff;            /* Warna latar navbar */
+    z-index: 2;                       /* Layer urutan tampilan */
+    padding-left: 4.5em;              /* Padding kiri */
+    margin: 0 auto;                   /* Margin otomatis */
+}
+
+.navbar img {
+    width: 30px;                      /* Lebar gambar navbar */
+    height: 30px;                     /* Tinggi gambar navbar */
+    object-fit: fill;                 /* Penyesuaian gambar */
+    margin-right: 10px;               /* Margin kanan */
+}
+
+/* Profile section styles - Gaya untuk bagian profil */
+.profile {
+    display: flex;                    /* Menggunakan flexbox */
+    align-items: center;              /* Perataan vertikal tengah */
+    gap: 5px;                         /* Jarak antar elemen */
+    flex-wrap: wrap;                  /* Memungkinkan elemen untuk pindah ke baris berikutnya */
+    padding-right: 20px;              /* Tambahkan padding ke kanan */
+}
+
+.profile-name {
+    font-size: 0.9rem;               /* Ukuran font nama profil */
+    word-break: break-word;          /* Memastikan nama profil yang panjang dibagi menjadi beberapa baris */
+    flex: 1;                         /* Memastikan nama profil mengambil ruang tersisa */
+}
+
+.profile-image {
+    width: 30px;                      /* Lebar gambar profil */
+    height: 30px;                     /* Tinggi gambar profil */
+    object-fit: cover;                /* Penyesuaian gambar */
+    border-radius: 50%;               /* Membuat gambar bulat */
+}
+
+/* Ensure profile and navbar are in the same layout */
+.navbar .profile {
+    margin-left: auto;                /* Mengatur posisi profil ke kanan */
+}
+
+.profile-name {
+    font-size: 0.9rem;               /* Ukuran font nama profil */
+    word-break: break-word;          /* Memastikan nama profil yang panjang dibagi menjadi beberapa baris */
+}
+
+.profile-img {
+    border-radius: 0%;               /* Tanpa border radius */
+    width: 100px;                    /* Lebar gambar */
+    height: 100px;                   /* Tinggi gambar */
+    margin-bottom: 10px;             /* Margin bawah */
+}
+
+/* Sidebar styles and functionality - Gaya dan fungsi sidebar */
+.side-toggle {
+    position: fixed;                 /* Posisi tetap */
+    z-index: 2;                     /* Layer urutan tampilan */
+    top: 13px;                      /* Posisi dari atas */
+    left: 25px;                     /* Posisi dari kiri */
+    float: right;                   /* Mengambang ke kanan */
+    font-size: 20px;                /* Ukuran font */
+    cursor: pointer;                /* Kursor pointer */
+}
+
+#toggle {
+    display: none;                  /* Menyembunyikan elemen */
+}
+
+.sidebar {
+    position: fixed;                /* Posisi tetap */
+    height: 100%;                   /* Tinggi penuh */
+    width: 200px;                   /* Lebar sidebar */
+    left: 0;                        /* Posisi dari kiri */
+    top: 0;                         /* Posisi dari atas */
+    padding: 80px 0 20px 0;         /* Padding */
+    color: #fff;                    /* Warna teks */
+    background-color: #041643;      /* Warna latar */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);  /* Bayangan */
+    transition: all 0.2s ease-in-out;  /* Efek transisi */
+}
+
+.sidebar.active {
+    transform: translateX(0);        /* Transformasi saat aktif */
+}
+
+.sidebar-menu {
+    display: flex;                  /* Menggunakan flexbox */
+    align-items: center;            /* Perataan vertikal tengah */
+    width: auto;                    /* Lebar otomatis */
+    cursor: pointer;                /* Kursor pointer */
+    transition: all 0.2s ease-in-out;  /* Efek transisi */
+}
+
+.sidebar-menu>span {
+    font-size: 25px;               /* Ukuran font */
+    align-items: center;            /* Perataan vertikal tengah */
+    justify-content: center;        /* Perataan horizontal tengah */
+    display: flex;                  /* Menggunakan flexbox */
+}
+
+.sidebar-menu:hover {
+    color: #2d2b98;                /* Warna teks saat hover */
+    background-color: #f8f8fb;      /* Warna latar saat hover */
+}
+
+/* Switch button styles - Gaya tombol switch */
+.switch-button {
+    display: flex;                  /* Menggunakan flexbox */
+    width: 200px;                   /* Lebar tombol */
+    height: 80px;                   /* Tinggi tombol */
+    font-size: 20px;                /* Ukuran font */
+    cursor: pointer;                /* Kursor pointer */
+    color: #ffffff;                 /* Warna teks */
+    align-items: center;            /* Perataan vertikal tengah */
+    transition: all 0.2s ease-in-out;  /* Efek transisi */
+    justify-content: center;        /* Perataan horizontal tengah */
+    text-decoration: none;          /* Tanpa dekorasi teks */
+    gap: 8px;                       /* Jarak antar elemen */
+}
+
+.switch-button:hover {
+    color: #2d2b98;                /* Warna teks saat hover */
+}
+
+.switch-button.active {
+    background-color: white;        /* Warna latar saat aktif */
+    color: #2d2b98;                /* Warna teks saat aktif */
+}
+
+/* Toggle sidebar functionality - Fungsi toggle sidebar */
+#toggle:checked~.sidebar {
+    width: 70px;                    /* Lebar saat di-toggle */
+}
+
+#toggle:checked~.sidebar .sidebar-menu>p {
+    display: none;                  /* Sembunyikan teks menu */
+}
+
+#toggle:checked~.sidebar .label {
+    display: none;                  /* Sembunyikan label */
+}
+
+#toggle:checked~main {
+    padding: 6rem 2rem 2rem 6rem;   /* Padding saat sidebar di-toggle */
+}
+
+/* Main content area - Area konten utama */
+main {
+    min-height: 100%;               /* Tinggi minimum */
+    padding: 2rem 1rem 2rem 14rem;  /* Padding */
+    color: #201f2b;                 /* Warna teks */
+    margin-top: 55px;               /* Margin atas untuk mengakomodasi navbar fixed */
+}
+
+.main {
+    animation: fadeIn 0.5s ease-in;  /* Animasi fade in */
+}
+
+/* Dashboard grid layout - Tata letak grid dashboard */
+.dashboard-container {
+    display: grid;                  /* Menggunakan grid */
+    grid-template-columns: 1fr 1fr 1fr 0.5fr 0.5fr;  /* Kolom grid */
+    grid-template-rows: auto;       /* Baris grid */
+    gap: 1rem;                      /* Jarak antar grid */
+    grid-template-areas:            /* Area grid */
+        "total1 total2 total3 total4"
+        "detail detail detail customer customer"
+        "detail detail detail customer customer";
+}
+
+/* Card styles - Gaya kartu */
+.card {
+    background-color: #fff;         /* Warna latar kartu */
+    padding: 1rem;                  /* Padding */
+    border-radius: 10px;            /* Sudut melengkung */
+}
+
+/* Total cards styles - Gaya kartu total */
+.total1 {
+    grid-area: total1;              /* Area grid */
+    background-color: #2d972e;      /* Warna latar */
+    color: #fff;                    /* Warna teks */
+}
+
+.total2 {
+    grid-area: total2;              /* Area grid */
+    background-color: #ffa705;      /* Warna latar */
+}
+
+.total3 {
+    grid-area: total3;              /* Area grid */
+    background-color: #9132bd;      /* Warna latar */
+    color: #fff;                    /* Warna teks */
+}
+
+.total4 {
+    grid-area: total4;              /* Area grid */
+    background-color: #15a1fe;      /* Warna latar */
+    color: #fff;                    /* Warna teks */
+}
+
+/* Detail and customer sections - Bagian detail dan pelanggan */
+.detail {
+    grid-area: detail;              /* Area grid */
+    overflow-x: auto;               /* Scroll horizontal */
+}
+
+.customer {
+    grid-area: customer;            /* Area grid */
+    overflow-x: auto;               /* Scroll horizontal */
+}
+
+/* Info card styles - Gaya kartu info */
+.info {
+    display: grid;                  /* Menggunakan grid */
+    grid-auto-flow: column;         /* Arah kolom */
+    justify-content: space-between; /* Jarak antar elemen */
+    align-items: center;            /* Perataan vertikal tengah */
+}
+
+.info-detail h2 {
+    font-size: 24px;               /* Ukuran font */
+}
+
+.info-detail p {
+    font-size: 14px;               /* Ukuran font */
+}
+
+.info-image {
+    font-size: 50px;               /* Ukuran font ikon */
+    color: #2d2b98;                /* Warna ikon */
+}
+
+/* Detail header styles - Gaya header detail */
+.detail-header {
+    display: grid;                  /* Menggunakan grid */
+    grid-auto-flow: column;         /* Arah kolom */
+    justify-content: space-between; /* Jarak antar elemen */
+    align-items: center;            /* Perataan vertikal tengah */
+}
+
+.detail-header button {
+    height: 30px;                   /* Tinggi tombol */
+    width: 120px;                   /* Lebar tombol */
+    border: 1px solid #2d2b98;      /* Border tombol */
+    background-color: #2d2b98;      /* Warna latar tombol */
+    color: #fff;                    /* Warna teks tombol */
+    border-radius: 5px;             /* Sudut melengkung */
+    cursor: pointer;                /* Kursor pointer */
+    transition: all 0.2s ease-in;   /* Efek transisi */
+}
+
+.detail-header button:hover {
+    background-color: transparent;   /* Warna latar saat hover */
+    color: #2d2b98;                 /* Warna teks saat hover */
+}
+
+/* Table styles - Gaya tabel */
+.detail table {
+    width: 100%;                    /* Lebar penuh */
+    border-collapse: collapse;      /* Menggabungkan border */
+}
+
+.detail table tr:nth-child(odd) {
+    background-color: #f8f8fb;      /* Warna latar baris ganjil */
+}
+
+.detail table th {
+    background-color: #f4f4f4;      /* Warna latar header */
+}
+
+.detail table th,
+.detail table td {
+    padding: 0.8rem 0.2rem;         /* Padding sel */
+    text-align: center;             /* Perataan teks tengah */
+    min-width: 120px;               /* Lebar minimum */
+    font-size: 14px;                /* Ukuran font */
+}
+/* Table hover effect - Efek hover pada baris tabel */
+.detail table tr:hover {
+    background-color: #f2f2f2;          /* Warna latar saat hover */
+    border-bottom: 2px solid #2d2b98;   /* Garis bawah saat hover */
+}
+
+/* Minimum width for specific columns - Lebar minimum untuk kolom tertentu */
+.detail table tr td:nth-child(2),
+.detail table tr td:nth-child(3) {
+    min-width: 150px;                   /* Lebar minimum kolom ke-2 dan ke-3 */
+}
+
+/* Status badge base styles - Gaya dasar badge status */
+.status {
+    padding: 0.3rem 1rem;               /* Padding dalam badge */
+    border-radius: 30px;                /* Sudut melengkung */
+    font-weight: 600;                   /* Ketebalan font */
+    letter-spacing: 1px;                /* Jarak antar huruf */
+    font-size: 0.7rem;                  /* Ukuran font */
+    display: block;                     /* Tampilan blok */
+}
+
+/* Status badge variants - Variasi badge status */
+.onprogress {
+    position: static;                   /* Posisi statis */
+    background-color: #fff2d7;         /* Warna latar kuning muda */
+    color: #ffa705;                    /* Warna teks oranye */
+}
+
+.confirmed {
+    background-color: #f7190d78;       /* Warna latar merah transparan */
+    color: #fe1515;                    /* Warna teks merah */
+}
+
+.fulfilled {
+    background-color: #dcedde;         /* Warna latar hijau muda */
+    color: #37aa38;                    /* Warna teks hijau */
+}
+
+.submitted {
+    background-color: lightgray;       /* Warna latar abu-abu muda */
+    color: gray;                       /* Warna teks abu-abu */
+}
+
+/* Customer section layout - Tata letak bagian pelanggan */
+.customer-wrapper {
+    display: grid;                     /* Tampilan grid */
+    grid-template-columns: 0.3fr 1fr 0.4fr;  /* Pembagian kolom grid */
+    grid-auto-flow: column;            /* Arah aliran kolom */
+    margin: 10px 0;                    /* Margin atas bawah */
+    min-width: 230px;                  /* Lebar minimum */
+    align-items: flex-start;           /* Perataan item ke atas */
+    gap: 5px;                          /* Jarak antar item */
+}
+
+/* Customer image styles - Gaya gambar pelanggan */
+.customer-image {
+    width: 40px;                       /* Lebar gambar */
+    height: 40px;                      /* Tinggi gambar */
+    border-radius: 50%;                /* Bentuk lingkaran */
+    object-fit: cover;                 /* Penyesuaian gambar */
+}
+
+/* Customer text styles - Gaya teks pelanggan */
+.customer-name>p,
+.customer-date {
+    font-size: 0.9rem;                 /* Ukuran font */
+}
+
+.customer-date {
+    text-align: right;                 /* Perataan teks ke kanan */
+    color: #9092a9;                    /* Warna teks abu-abu */
+}
+
+/* Button styles - Gaya tombol */
+.detailButton, .edit-btn {
+    background-color: #4CAF50;         /* Warna latar hijau */
+    color: white;                      /* Warna teks putih */
+    border: none;                      /* Tanpa border */
+    padding: 5px 10px;                 /* Padding tombol */
+    border-radius: 5px;                /* Sudut melengkung */
+    cursor: pointer;                   /* Kursor pointer */
+    transition: background-color 0.3s;  /* Transisi warna */
+}
+
+.detailButton:hover {
+    background-color: #45a049;         /* Warna latar saat hover */
+}
+
+.edit-btn {
+    background-color: #c507ffa1;       /* Warna latar ungu transparan */
+    margin-left: 5px;                  /* Margin kiri */
+}
+
+.viewButton {
+    background-color: #63b4ff;         /* Warna latar biru muda */
+    color: white;                      /* Warna teks putih */
+    border: none;                      /* Tanpa border */
+    padding: 5px 10px;                 /* Padding tombol */
+    border-radius: 5px;                /* Sudut melengkung */
+    cursor: pointer;                   /* Kursor pointer */
+    transition: background-color 0.3s;  /* Transisi warna */
+}
+
+.viewButton:hover {
+    background-color: #6373ff;         /* Warna latar saat hover */
+}
+
+/* Training button styles - Gaya tombol pelatihan */
+.training-button {
+    display: flex;                     /* Tampilan flex */
+    align-items: center;               /* Perataan item tengah */
+    padding: 10px 19px;                /* Padding tombol */
+    font-size: 16px;                   /* Ukuran font */
+    color: #ffffff;                    /* Warna teks putih */
+    background-color: #6b4ba1;         /* Warna latar ungu */
+    border: none;                      /* Tanpa border */
+    border-radius: 20px;               /* Sudut melengkung */
+    cursor: pointer;                   /* Kursor pointer */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);  /* Bayangan */
+    outline: none;                     /* Tanpa outline */
+    transition: background-color 0.3s ease;  /* Transisi warna */
+}
+
+.training-button .plus-icon {
+    margin-right: 8px;                 /* Margin kanan ikon */
+    font-weight: bold;                 /* Ketebalan font */
+    font-size: 18px;                   /* Ukuran font */
+}
+
+.training-button:hover {
+    background-color: #5c4291;         /* Warna latar saat hover */
+    background-color: #0056b3;         /* Warna latar saat hover */
+    transform: scale(1.05);            /* Efek scaling saat hover */
+    transition: transform 0.3s;         /* Transisi transformasi */
+}
+
+/* Cancel button styles - Gaya tombol batal */
+.cancel-button {
+    display: flex;                     /* Tampilan flex */
+    align-items: center;               /* Perataan item tengah */
+    padding: 10px 19px;                /* Padding tombol */
+    font-size: 16px;                   /* Ukuran font */
+    color: #ffffff;                    /* Warna teks putih */
+    background-color: #6b4ba1;         /* Warna latar ungu */
+    border: none;                      /* Tanpa border */
+    border-radius: 20px;               /* Sudut melengkung */
+    cursor: pointer;                   /* Kursor pointer */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);  /* Bayangan */
+    outline: none;                     /* Tanpa outline */
+    transition: background-color 0.3s ease;  /* Transisi warna */
+}
+
+/* Review button styles - Gaya tombol review */
+.review-button {
+    background-color: #4CAF50;         /* Warna latar hijau */
+    color: white;                      /* Warna teks putih */
+    border: none;                      /* Tanpa border */
+    padding: 5px 10px;                 /* Padding tombol */
+    border-radius: 5px;                /* Sudut melengkung */
+    cursor: pointer;                   /* Kursor pointer */
+    transition: background-color 0.3s;  /* Transisi warna */
+}
+
+.review-button:hover {
+    background-color: #45a049;         /* Warna latar saat hover */
+}
+
+/* Settings section styles - Gaya bagian pengaturan */
+.content-settings {
+    margin-left: 250px;                /* Margin kiri */
+    padding: 20px;                     /* Padding konten */
+}
+
+/* Section title styles - Gaya judul bagian */
+.section-title {
+    font-size: 24px;                   /* Ukuran font */
+    margin: 20px 0;                    /* Margin atas bawah */
+    margin-bottom: 20px;               /* Margin bawah */
+    margin-top: 30px;                  /* Margin atas */
+    color: #2d2b98;                    /* Warna teks biru */
+    font-weight: bold;                 /* Ketebalan font */
+    text-align: center;                /* Perataan teks tengah */
+}
+
+/* Settings button styles - Gaya tombol pengaturan */
+.settings-button {
+    display: flex;                     /* Tampilan flex */
+    align-items: center;               /* Perataan item tengah */
+    padding: 10px;                     /* Padding tombol */
+    background-color: #e6e6e6;         /* Warna latar abu-abu muda */
+    border-radius: 5px;                /* Sudut melengkung */
+    margin-bottom: 10px;               /* Margin bawah */
+    margin-right: 30px;                /* Margin kanan */
+    cursor: pointer;                   /* Kursor pointer */
+}
+
+.settings-button:hover {
+    background-color: #cccccc;         /* Warna latar saat hover */
+}
+
+.settings-text {
+    font-size: 16px;                   /* Ukuran font */
+    margin-left: 5px;                  /* Margin kiri */
+}
+
+/* User account settings styles - Gaya pengaturan akun pengguna */
+.content-user-settings {
+    margin-left: 250px;                /* Margin kiri */
+    margin-right: 30px;                /* Margin kanan */
+    padding: 20px;                     /* Padding konten */
+}
+
+/* User section title styles - Gaya judul bagian pengguna */
+.section-title-user {
+    font-size: 24px;                   /* Ukuran font */
+    margin: 30px 0;                    /* Margin atas bawah */
+    padding: 10px 0;                   /* Padding atas bawah */
+    color: #2d2b98;                    /* Warna teks biru */
+    font-weight: bold;                 /* Ketebalan font */
+    display: flex;                     /* Tampilan flex */
+    align-items: center;               /* Perataan item tengah */
+}
+
+.user-text {
+    font-size: 24px;                   /* Ukuran font */
+    margin-left: 5px;                  /* Margin kiri */
+}
+
+/* Form container styles - Gaya kontainer formulir */
+.form-container {
+    background-color: #fff;            /* Warna latar putih */
+    padding: 20px;                     /* Padding kontainer */
+    border-radius: 8px;                /* Sudut melengkung */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  /* Bayangan */
+}
+
+/* Form group styles - Gaya grup formulir */
+.form-group {
+    margin: 20px 0;                    /* Margin atas bawah */
+    margin-bottom: 15px;               /* Margin bawah */
+    display: flex;                     /* Tampilan flex */
+    align-items: center;               /* Perataan item tengah */
+    margin-left: 10px;                 /* Margin kiri */
+    cursor: pointer;                   /* Kursor pointer */
+}
+  
+.form-group button {
+    margin-top: 5px;                   /* Margin atas tombol */
+}
+
+.form-group label {
+    width: 250px;                      /* Lebar label */
+}
+
+.form-group input {
+    width: 85%;                        /* Lebar input */
+    padding: 8px;                      /* Padding input */
+    box-sizing: border-box;            /* Model box-sizing */
+    border: 1px solid #ccc;            /* Border input */
+    border-radius: 4px;                /* Sudut melengkung */
+    margin-right: 10px;                /* Margin kanan */
+    display: inline-block;             /* Tampilan inline-block */
+}
+
+/* Profile header styles - Gaya header profil */
+.profile-header {
+    align-items: center;               /* Perataan item tengah */
+    margin-bottom: 20px;               /* Margin bawah */
+}
+
+.profile-header .profile-picture {
+    margin-right: 20px;                /* Margin kanan gambar profil */
+}
+
+.profile-header button {
+    padding: 10px 16px;                /* Padding tombol */
+    margin-left: 0px;                  /* Margin kiri */
+    background-color: #e0e0e0;         /* Warna latar abu-abu */
+    border: none;                      /* Tanpa border */
+    border-radius: 4px;                /* Sudut melengkung */
+    cursor: pointer;                   /* Kursor pointer */
+}
+
+.profile-header button:hover {
+    background-color: #cccccc;         /* Warna latar saat hover */
+}
+
+/* Form action button styles - Gaya tombol aksi formulir */
+.button {
+    margin-top: 20px;                  /* Margin atas */
+    padding: 10px 20px;                /* Padding tombol */
+    background-color: #16244b;         /* Warna latar biru tua */
+    color: white;                      /* Warna teks putih */
+    border: none;                      /* Tanpa border */
+    border-radius: 4px;                /* Sudut melengkung */
+    cursor: pointer;                   /* Kursor pointer */
+    display: inline-block;             /* Tampilan inline-block */
+}
+
+.button:hover {
+    background-color: #0d1b35;         /* Warna latar saat hover */
+}
+
+/* Pagination styles - Gaya paginasi */
+.pagination {
+    display: flex;                     /* Tampilan flex */
+    align-items: center;               /* Perataan item tengah */
+    gap: 5px;                          /* Jarak antar item */
+    padding: 10px;                     /* Padding kontainer */
+    border: 1px solid #ddd;            /* Border kontainer */
+    border-radius: 25px;               /* Sudut melengkung */
+    max-width: fit-content;            /* Lebar maksimum */
+    margin: 20px auto;                 /* Margin dan perataan tengah */
+}
+/* Notification settings styles - Gaya pengaturan notifikasi */
+.content-notif {
+    width: 80%;                        /* Lebar konten 80% */
+    margin-left: 250px;                /* Margin kiri */
+    margin-right: 30px;                /* Margin kanan */
+    margin-top: 30px;                  /* Margin atas */
+    padding: 20px;                     /* Padding dalam */
+    background-color: white;           /* Warna latar putih */
+    border-radius: 5px;                /* Sudut melengkung */
+}
+
+.content-notif h1 {
+    font-size: 24px;                   /* Ukuran font judul */
+}
+
+.section-title-notif {
+    font-size: 24px;                   /* Ukuran font judul bagian */
+    margin-bottom: 5px;                /* Margin bawah */
+    margin-top: 5px;                   /* Margin atas */
+    padding: 10px 0;                   /* Padding atas bawah */
+    color: #2d2b98;                    /* Warna teks biru */
+    font-weight: bold;                 /* Ketebalan font */
+    display: flex;                     /* Tampilan flex */
+    align-items: center;               /* Perataan vertikal tengah */
+}
+
+.text-review {
+    font-size: 14px;                   /* Ukuran font teks review */
+}
+
+.notif-text {
+    font-size: 24px;                   /* Ukuran font teks notifikasi */
+    margin-left: 5px;                  /* Margin kiri */
+}
+
+.notification-item {
+    background-color: #f4f4f4;         /* Warna latar abu-abu muda */
+    padding: 15px;                     /* Padding dalam */
+    margin-bottom: 10px;               /* Margin bawah */
+    border-radius: 5px;                /* Sudut melengkung */
+    display: flex;                     /* Tampilan flex */
+    justify-content: space-between;    /* Perataan spasi antar elemen */
+    align-items: center;               /* Perataan vertikal tengah */
+}
+
+.button-notif {
+    padding: 10px 20px;                /* Padding tombol */
+    background-color: #1a1c8c;         /* Warna latar biru tua */
+    color: white;                      /* Warna teks putih */
+    border: none;                      /* Tanpa border */
+    border-radius: 5px;                /* Sudut melengkung */
+    cursor: pointer;                   /* Kursor pointer */
+}
+
+select {
+    width: 85%;                        /* Lebar elemen select */
+    padding: 10px;                     /* Padding dalam */
+    font-size: 14px;                   /* Ukuran font */
+    border: 1px solid #ccc;            /* Border abu-abu */
+    border-radius: 5px;                /* Sudut melengkung */
+    background-color: #fff;            /* Warna latar putih */
+    outline: none;                     /* Tanpa outline */
+    appearance: none;                  /* Menghilangkan tampilan default */
+    resize: vertical;                  /* Dapat diresize vertikal */
+}
+
+#listPeserta {
+    margin-top: 10px;                  /* Margin atas */
+}
+
+/* Toggle switch styles - Gaya tombol toggle */
+.toggle-switch {
+    position: relative;                /* Posisi relatif */
+    display: inline-block;             /* Tampilan inline-block */
+    width: 35px;                       /* Lebar switch */
+    height: 20px;                      /* Tinggi switch */
+}
+
+.toggle-switch input {
+    opacity: 0;                        /* Sembunyikan input asli */
+    width: 0;                          /* Lebar 0 */
+    height: 0;                         /* Tinggi 0 */
+}
+
+.slider {
+    position: absolute;                /* Posisi absolut */
+    cursor: pointer;                   /* Kursor pointer */
+    top: 0;                           /* Posisi atas */
+    left: 0;                          /* Posisi kiri */
+    right: 0;                         /* Posisi kanan */
+    bottom: 0;                        /* Posisi bawah */
+    background-color: #ccc;           /* Warna latar abu-abu */
+    transition: .4s;                  /* Durasi transisi */
+    border-radius: 34px;              /* Sudut melengkung */
+}
+
+.slider:before {
+    position: absolute;               /* Posisi absolut */
+    content: "";                      /* Konten kosong */
+    height: 14px;                     /* Tinggi bulatan */
+    width: 14px;                      /* Lebar bulatan */
+    left: 3px;                        /* Posisi dari kiri */
+    bottom: 3px;                      /* Posisi dari bawah */
+    background-color: white;          /* Warna latar putih */
+    transition: .4s;                  /* Durasi transisi */
+    border-radius: 50%;               /* Bentuk bulat */
+}
+
+input:checked + .slider {
+    background-color: #1a1c8c;        /* Warna latar saat aktif */
+}
+
+input:checked + .slider:before {
+    transform: translateX(14px);       /* Geser bulatan saat aktif */
+}
+
+/* Security settings styles - Gaya pengaturan keamanan */
+.main-content-security {
+    flex-grow: 1;                      /* Penyesuaian ukuran */
+    padding: 20px;                     /* Padding dalam */
+}
+
+.container-security {
+    max-width: 600px;                  /* Lebar maksimum */
+    margin: 0 auto;                    /* Margin otomatis */
+    background-color: #fff;            /* Warna latar putih */
+    padding: 20px;                     /* Padding dalam */
+    border-radius: 10px;               /* Sudut melengkung */
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Bayangan */
+}
+
+.form-group-security {
+    margin-bottom: 15px;               /* Margin bawah */
+}
+
+.form-group-security label {
+    display: block;                    /* Tampilan block */
+    margin-bottom: 5px;                /* Margin bawah */
+}
+
+.form-group-security input[type="password"],
+.form-group-security input[type="text"] {
+    width: 100%;                       /* Lebar penuh */
+    padding: 10px;                     /* Padding dalam */
+    border: 1px solid #ccc;            /* Border abu-abu */
+    border-radius: 5px;                /* Sudut melengkung */
+}
+
+.form-group-security input[type="submit"] {
+    background-color: #007bff;         /* Warna latar biru */
+    color: white;                      /* Warna teks putih */
+    padding: 10px;                     /* Padding dalam */
+    border: none;                      /* Tanpa border */
+    border-radius: 5px;                /* Sudut melengkung */
+    cursor: pointer;                   /* Kursor pointer */
+}
+
+.form-group-security .cancel-btn-security {
+    background-color: #6c757d;         /* Warna latar abu-abu */
+    color: white;                      /* Warna teks putih */
+    padding: 10px;                     /* Padding dalam */
+    border: none;                      /* Tanpa border */
+    border-radius: 5px;                /* Sudut melengkung */
+    cursor: pointer;                   /* Kursor pointer */
+}
+
+.form-group-security .button-container-security {
+    display: flex;                     /* Tampilan flex */
+    justify-content: space-between;    /* Perataan spasi antar tombol */
+}
+
+/* Employee card styles - Gaya kartu karyawan */
+.employee-card {
+    background-color: rgba(255,255,255,0.8); /* Warna latar transparan */
+    border-radius: 10px;               /* Sudut melengkung */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Bayangan */
+    padding: 15px;                     /* Padding dalam */
+    text-align: center;                /* Perataan teks tengah */
+    margin: 10px;                      /* Margin luar */
+    background-image: url('https://cdn.wallpapersafari.com/24/71/sjFqpE.gif'); /* Gambar latar */
+    background-size: cover;            /* Ukuran gambar latar */
+    background-repeat: no-repeat;      /* Tidak mengulang gambar */
+    background-position: center;       /* Posisi gambar tengah */
+}
+
+.employee-card:hover {
+    transform: scale(1.01);            /* Efek pembesaran saat hover */
+    transition: transform 0.3s;        /* Durasi transisi */
+}
+
+/* Banner Background - Gaya latar banner */
+.banner-card {
+    background-color: rgba(255,255,255,0.8); /* Warna latar transparan */
+    border-radius: 10px;               /* Sudut melengkung */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Bayangan */
+    padding: 10%;                      /* Padding responsif */
+    text-align: center;                /* Perataan teks tengah */
+    margin: 10px;                      /* Margin luar */
+    background-image: url('/assets/images/Banner-ajukan.png'); /* Gambar latar */
+    background-size: cover;            /* Ukuran gambar latar */
+    background-repeat: no-repeat;      /* Tidak mengulang gambar */
+    background-position: center;       /* Posisi gambar tengah */
+}
+
+.banner-card:hover {
+    transform: scale(1.01);            /* Efek pembesaran saat hover */
+    transition: transform 0.3s;        /* Durasi transisi */
+}
+
+/* Form elements styles - Gaya elemen formulir */
+.form-actions {
+    display: flex;                     /* Tampilan flex */
+    justify-content: flex-end;         /* Perataan ke kanan */
+    gap: 15px;                         /* Jarak antar elemen */
+    margin-top: 20px;                  /* Margin atas */
+}
+
+.radio-group {
+    display: flex;                     /* Tampilan flex */
+    flex-wrap: wrap;                   /* Pembungkus fleksibel */
+    margin-left: 35px;                 /* Margin kiri */
+}
+
+.radio-option {
+    display: flex;                     /* Tampilan flex */
+    align-items: center;               /* Perataan vertikal tengah */
+}
+
+.radio-option input[type="radio"] {
+    margin: 0;                         /* Tanpa margin */
+}
+
+textarea.form-control {
+    width: 85%;                        /* Lebar textarea */
+    resize: vertical;                  /* Dapat diresize vertikal */
+}
+
+/* Footer styles - Gaya footer */
+.footer-content {
+    font-size: 10px;                   /* Ukuran font */
+    text-align: center;                /* Perataan teks tengah */
+    padding: 10px;                     /* Padding dalam */
+}
+
+/* Link styles - Gaya tautan */
+a {
+    text-decoration: none;             /* Tanpa dekorasi */
+}
+
+/* Animations - Animasi */
+@keyframes fadeIn {
+    from { opacity: 0; }               /* Mulai transparan */
+    to { opacity: 1; }                 /* Berakhir solid */
+}
+
+/* Responsive design - Desain responsif */
+@media screen and (max-width: 980px) {
+    .dashboard-container {
+        grid-template-columns: 1fr 1fr;  /* Layout grid 2 kolom */
+        grid-template-areas:
+            "total1 total2"
+            "total3 total4"
+            "detail detail"
+            "customer customer";
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .profile-name {
+        display: none;                   /* Sembunyikan nama profil */
+    }
+
+    .sidebar {
+        display: none;                   /* Sembunyikan sidebar */
+    }
+
+    .main {
+        padding: 6rem 2rem 2rem 2rem;    /* Padding responsif */
+    }
+
+    #toggle:checked~.sidebar {
+        width: 200px;                    /* Lebar sidebar saat aktif */
+        display: block;                  /* Tampilkan sidebar */
+    }
+
+    #toggle:checked~main {
+        padding: 6rem 2rem 2rem 2rem;    /* Padding saat sidebar aktif */
+    }
+
+    .dashboard-container {
+        grid-template-columns: 1fr;      /* Layout grid 1 kolom */
+        grid-template-areas:
+            "total1"
+            "total2"
+            "total3"
+            "total4"
+            "detail"
+            "customer";
+    }
+
+    .detail table {
+        font-size: 0.9rem;               /* Ukuran font tabel */
+    }
+}
+
+/* Identitas - Identity styles */
+.container {
+    width: 90%;                          /* Lebar kontainer */
+    height: 100%;                        /* Tinggi kontainer */
+    padding: 50px;                       /* Padding dalam */
+    border: 1px solid #ccc;              /* Border abu-abu */
+    border-radius: 20px;                 /* Sudut melengkung */
+    background-color: white;             /* Warna latar putih */
+    box-sizing: border-box;              /* Model box-sizing */
+    overflow-y: auto;                    /* Scroll vertikal */
+    margin-right: 100px;
+}
+
+.main-content {
+    display: flex;                       /* Tampilan flex */
+    align-items: center;                 /* Perataan vertikal tengah */
+    justify-content: center;             /* Perataan horizontal tengah */
+    min-height: 80vh;                    /* Tinggi minimum */
+    padding: 20px;                       /* Padding dalam */
+    margin-left: 100px;                  /* Margin kiri */
+    box-sizing: border-box;              /* Model box-sizing */
+}
+
+.main-content2 {
+    display: flex;                       /* Tampilan flex */
+    align-items: center;                 /* Perataan vertikal tengah */
+    justify-content: center;             /* Perataan horizontal tengah */
+    min-height: 80vh;                    /* Tinggi minimum */
+    padding: 20px;                       /* Padding dalam */
+    margin-left: 200px;                  /* Margin kiri */
+    box-sizing: border-box;              /* Model box-sizing */
+}
+
+.container table td input[type="text"],
+.container table td input[type="email"],
+.container table td input[type="date"] {
+    width: 100%;                         /* Lebar penuh */
+    padding: 15px;                       /* Padding dalam */
+    margin: 5px 0;                       /* Margin atas bawah */
+    box-sizing: border-box;              /* Model box-sizing */
+    background-color: #EEEEEE;           /* Warna latar abu-abu muda */
+    border-radius: 10px;                 /* Sudut melengkung */
+    color: rgb(126, 126, 126);           /* Warna teks abu-abu */
+}
+
+input {
+    border: none;                        /* Tanpa border */
+    outline: none;                       /* Tanpa outline */
+}
+
+.status.disetujui {
+    color: #28a745;
+}
+
+.status.ditolak {
+    color: #dc3545;
+}
+
+.status.menunggu {
+    color: #ffc107;
+}status.disetujui {
+    color: #28a745;
+}
+
+.status.ditolak {
+    color: #dc3545;
+}
+
+.status.menunggu {
+    color: #ffc107;
+}
+
+/*identitas setting css*/
+.flex-container2 {
+    display:         flex;
+    justify-content: space-between; /* Memastikan form dan foto berada di sisi kiri dan kanan */
+    gap:             20px;
+    align-items:     center; /* Menjaga agar form dan foto berada sejajar secara vertikal */
+}
+
+.form-section2 {
+    flex:            2; /* Menyesuaikan bagian form agar lebih lebar */
+    margin-bottom: 50px;
+}
+
+.form-section2 label {
+    font-weight: bold;
+    text-align: left;
+    padding-right: 15px;  /* Memberikan jarak untuk titik dua agar sejajar */
+    white-space: nowrap;  /* Menjaga label tetap pada satu baris */
+}
+
+.form-section2 td {
+    padding: 10px;
+    text-align: left;  /* Menyelaraskan konten dalam <td> ke kiri */
+}
+
+.form-section2 td:first-child {
+    text-align: right;  /* Menyelaraskan label (titik dua) ke kanan */
+    padding-right: 10px;  /* Memberikan jarak antara label dan input */
+}
+
+.form-section2 label span {
+    margin-right: 100px;  /* Memberikan sedikit jarak antara teks dan titik dua */
+    text-align: left;
+    
+}
+
+.photo-section {
+    flex:            1;
+    display:         flex;
+    justify-content: center; /* Menghorizontalkan foto di tengah */
+    align-items:     center; /* Mengvertikalkan foto di tengah */
+}
+
+.photo-box {
+    width:           250px;
+    height:          250px;
+    border:          2px solid #000;
+    overflow:        hidden;
+    display:         flex;
+    justify-content: center;
+    align-items:     center;
+    background-color:#f0f0f0;
+    margin-top:      70px;
+}
+
+.photo-box img {
+    width:           100%;
+    height:          100%;
+    object-fit:      cover;
+}
+
+.settings-container {
+    display:         flex;
+    flex-direction:  column;
+    gap:             20px;
+}
+
+.settings-box {
+    border:          1px solid #ddd;
+    border-radius:   8px;
+    padding:         20px;
+    background-color:#f9f9f9;
+    box-shadow:      0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.settings-box h3 {
+    margin-bottom:   15px;
+    font-size:       18px;
+    font-weight:     bold;
+}
+
+.settings-box label {
+    display:         block;
+    margin-bottom:   5px;
+    font-weight:     500;
+}
+
+.settings-box input {
+    width:           100%;
+    padding:         10px;
+    margin-bottom:   15px;
+    border:          1px solid #ccc;
+    border-radius:   5px;
+}
+
+.settings-box button {
+    padding:         10px 20px;
+    background-color:#007bff;
+    color:           white;
+    border:          none;
+    border-radius:   5px;
+    cursor:          pointer;
+    font-size:       16px;
+}
