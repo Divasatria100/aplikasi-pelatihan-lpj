@@ -59,12 +59,6 @@ if (!$result_usulan) {
     die("Query gagal dijalankan: " . mysqli_error($koneksi));
 }
 
-// Menampilkan notifikasi login berhasil jika session login_success ada
-if (isset($_SESSION['login_success']) && $_SESSION['login_success'] == true) {
-    echo "<script>alert('Login berhasil!');</script>";
-    unset($_SESSION['login_success']);  // Menghapus session login_success setelah notifikasi ditampilkan
-}
-
 mysqli_close($koneksi); // Menutup koneksi database
 ?>
 
@@ -120,6 +114,15 @@ mysqli_close($koneksi); // Menutup koneksi database
 </head>
 
 <body>
+    <?php 
+    // Menampilkan notifikasi login berhasil
+    if (isset($_SESSION['login_success']) && $_SESSION['login_success'] == true) {
+        echo '<div class="login-notification">
+                <i class="fas fa-check-circle"></i> Login berhasil! Selamat datang ' . $user['nama'] . '
+              </div>';
+        unset($_SESSION['login_success']); // Hapus session setelah ditampilkan
+    }
+    ?>
     <!-- Navigation Bar dengan logo dan profil -->
     <nav class="navbar">
         <img class="logo" src="/assets/images/Logo_Ajukan.png" alt="Ajukan" style="width: fit-content;">    
@@ -180,7 +183,7 @@ mysqli_close($koneksi); // Menutup koneksi database
                         <th>ID</th>                    
                         <th>Judul Pelatihan</th>       
                         <th>Jenis Kegiatan</th>        
-                        <th>Nama Peserta</th>          
+                        <th>Nama Karyawan</th>          
                         <th>Tanggal Mulai</th>         
                         <th>Pengajuan</th> 
                         <th>Status LPJ</th>          

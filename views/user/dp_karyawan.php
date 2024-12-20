@@ -53,8 +53,8 @@ if ($result->num_rows > 0) {
     $jenisPelatihan = $data['jenis_pelatihan'];
     $namaPeserta = explode(',', $data['nama_peserta']);    // Memecah string nama peserta menjadi array
     $lembaga = $data['lembaga'];
-    $jurusan = $data['jurusan'];
-    $programStudi = $data['program_studi'];
+    $jurusan_id = $data['jurusan_id'];
+    $program_studi_id = $data['program_studi_id'];
     $tanggalMulai = $data['tanggal_mulai'];
     $tanggalSelesai = $data['tanggal_selesai'];
     $tempat = $data['tempat'];
@@ -63,9 +63,30 @@ if ($result->num_rows > 0) {
     $target = $data['target'];
 } else {
     // Inisialisasi variabel dengan nilai kosong jika data tidak ditemukan
-    $judulPelatihan = $jenisPelatihan = $namaPeserta = $lembaga = $jurusan = $programStudi = 
+    $judulPelatihan = $jenisPelatihan = $namaPeserta = $lembaga = $jurusan_id = $program_studi_id = 
     $tanggalMulai = $tanggalSelesai = $tempat = $sumberDana = $namaManajer = $target = '';
 }
+
+// Query to get jurusan name using the correct column names
+$sql_jurusan = "SELECT nama_jurusan FROM jurusan WHERE jurusan_id = '$jurusan_id'";
+$result_jurusan = $conn->query($sql_jurusan);
+$jurusan_name = ($result_jurusan && $result_jurusan->num_rows > 0) 
+    ? $result_jurusan->fetch_assoc()['nama_jurusan'] 
+    : 'Jurusan Tidak Ditemukan';
+
+// Query to get program studi name with correct column names
+$sql_prodi = "SELECT nama_program_studi FROM program_studi WHERE program_studi_id = '$program_studi_id'";
+$result_prodi = $conn->query($sql_prodi);
+$prodi_name = ($result_prodi && $result_prodi->num_rows > 0) 
+    ? $result_prodi->fetch_assoc()['nama_program_studi'] 
+    : 'Program Studi Tidak Ditemukan';
+
+// Query to get manager's name from user table
+$sql_manager = "SELECT nama FROM user WHERE user_id = '$namaManajer'";
+$result_manager = $conn->query($sql_manager);
+$manager_name = ($result_manager && $result_manager->num_rows > 0) 
+    ? $result_manager->fetch_assoc()['nama'] 
+    : 'Manajer Tidak Ditemukan';
 ?>
 
 <!DOCTYPE html>
@@ -170,34 +191,16 @@ if ($result->num_rows > 0) {
                     <input type="text" class="form-control" name="lembaga" value="<?php echo $lembaga; ?>" disabled>    <!-- Field lembaga yang tidak bisa diedit -->
                 </div>
 
-                <!-- Input Jurusan dengan konversi kode -->
+                <!-- Input Jurusan -->
                 <div class="form-group">
                     <label>Jurusan</label>
-                    <input type="text" class="form-control" name="jurusan" value="<?php 
-                        // Konversi kode jurusan ke nama lengkap
-                        switch ($jurusan) {
-                            case 'TI':
-                                echo 'Teknik Informatika';
-                                break;
-                            case 'TM':
-                                echo 'Teknik Mesin';
-                                break;
-                            case 'TE':
-                                echo 'Teknik Elektro';
-                                break;
-                            case 'MB':
-                                echo 'Manajemen Bisnis';
-                                break;
-                            default:
-                                echo 'Jurusan Tidak Diketahui';
-                        } 
-                    ?>" disabled>    <!-- Field jurusan dengan konversi kode ke nama lengkap -->
+                    <input type="text" class="form-control" name="jurusan" value="<?php echo $jurusan_name; ?>" disabled>
                 </div>
 
                 <!-- Input Program Studi -->
                 <div class="form-group">
                     <label>Program Studi</label>
-                    <input type="text" class="form-control" name="programStudi" value="<?php echo $programStudi; ?>" disabled>    <!-- Field program studi yang tidak bisa diedit -->
+                    <input type="text" class="form-control" name="programStudi" value="<?php echo $prodi_name; ?>" disabled>
                 </div>
 
                 <!-- Input Tanggal Mulai dan Selesai -->
@@ -227,7 +230,7 @@ if ($result->num_rows > 0) {
                 <!-- Input Nama Manajer -->
                 <div class="form-group">
                     <label>Manajer</label>
-                    <input type="text" class="form-control" name="namaManajer" value="<?php echo $namaManajer; ?>" disabled>    <!-- Field nama manajer -->
+                    <input type="text" class="form-control" name="namaManajer" value="<?php echo $manager_name; ?>" disabled>
                 </div>
 
                 <!-- Input Target -->

@@ -5,105 +5,126 @@ $username = "root";           // Username default untuk XAMPP
 $password = "";               // Password default kosong untuk XAMPP
 $database = "db_ajukan";      // Nama database yang akan digunakan
 
-// Membuat koneksi baru ke database MySQL menggunakan mysqli
-$conn = new mysqli($host, $username, $password, $database);
-
-// Memeriksa apakah koneksi ke database berhasil
-if ($conn->connect_error) {
-    die("Koneksi gagal: " . $conn->connect_error);  // Menghentikan program dan menampilkan pesan error jika koneksi gagal
+// Membuat koneksi baru ke database MySQL menggunakan mysqli dengan error handling
+try {
+    $conn = new mysqli($host, $username, $password, $database);
+    
+    // Memeriksa apakah koneksi ke database berhasil
+    if ($conn->connect_error) {
+        throw new Exception("Koneksi gagal: " . $conn->connect_error);
+    }
+} catch (Exception $e) {
+    // Log error dan tampilkan pesan yang user-friendly
+    error_log($e->getMessage());
+    die("Maaf, terjadi kesalahan dalam koneksi database. Silakan coba beberapa saat lagi.");
 }
 
 // Memulai session PHP untuk manajemen status login
 session_start();
 
-// Memeriksa apakah user sudah login dengan mengecek session session_nik
+// Memeriksa apakah user sudah login dengan mengecek session_username
 if (!isset($_SESSION['session_username'])) {
-    header("Location: /views/auth/login.php");  // Pastikan path dimulai dengan /
+    header("Location: /views/auth/login.php");  // Redirect ke halaman login
     exit();  // Menghentikan eksekusi script
 }
 
-// Mengambil nik login user dari session yang aktif
-$nik = $_SESSION['session_nik'];  // Mengambil nilai session_nik dari session
+// Mengambil nik login user dari session yang aktif dengan validasi
+$nik = isset($_SESSION['session_nik']) ? $_SESSION['session_nik'] : '';
+if (empty($nik)) {
+    error_log("NIK tidak ditemukan dalam session");
+    header("Location: /views/auth/login.php");
+    exit();
+}
 
-// Query SQL untuk mengambil nama pengguna berdasarkan nik
-$sqlUser = "
-    SELECT u.nama 
-    FROM user u 
-    WHERE u.nik = '$nik'
-";
-$resultUser = $conn->query($sqlUser);  // Mengeksekusi query
+// Query SQL untuk mengambil nama pengguna berdasarkan nik dengan prepared statement
+$sqlUser = $conn->prepare("SELECT nama FROM user WHERE nik = ?");
+$sqlUser->bind_param("s", $nik);
+$sqlUser->execute();
+$resultUser = $sqlUser->get_result();
 
 // Memeriksa hasil query dan mengambil nama pengguna
 if ($resultUser->num_rows > 0) {
-    $user = $resultUser->fetch_assoc();  // Mengambil data dalam bentuk array associative
-    $userName = $user['nama'];           // Menyimpan nama user ke variabel
+    $user = $resultUser->fetch_assoc();
+    $userName = htmlspecialchars($user['nama']);  // Mencegah XSS
 } else {
-    $userName = 'Nama Pengguna Tidak Ditemukan';  // Nilai default jika data tidak ditemukan
+    $userName = 'Nama Pengguna Tidak Ditemukan';
 }
 
-// Query SQL untuk mengambil daftar manajer dari database
-$sqlManajer = "SELECT u.user_id, u.nama FROM user u WHERE u.role = 'manajer'";
-$resultManajer = $conn->query($sqlManajer);  // Mengeksekusi query manajer
-$manajers = [];  // Inisialisasi array kosong untuk menyimpan data manajer
+// Query SQL untuk mengambil daftar manajer dari database dengan prepared statement
+$sqlManajer = $conn->prepare("SELECT user_id, nama FROM user WHERE role = 'manajer'");
+$sqlManajer->execute();
+$resultManajer = $sqlManajer->get_result();
+$manajers = [];
+
 if ($resultManajer->num_rows > 0) {
     while ($row = $resultManajer->fetch_assoc()) {
-        $manajers[] = $row;  // Menambahkan setiap data manajer ke dalam array
+        $manajers[] = [
+            'user_id' => $row['user_id'],
+            'nama' => htmlspecialchars($row['nama'])  // Mencegah XSS
+        ];
     }
 }
 
-// Mengambil nama profile dari tabel user
-$user_id = $_SESSION['user_id'];
-$nama_query = "SELECT nama FROM user WHERE user_id = $user_id";
-$nama_result = mysqli_query($conn, $nama_query);
-$nama_row = mysqli_fetch_assoc($nama_result);
-$nama_profile = $nama_row['nama'];
+// Mengambil nama profile dari tabel user dengan prepared statement
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
+$nama_query = $conn->prepare("SELECT nama FROM user WHERE user_id = ?");
+$nama_query->bind_param("i", $user_id);
+$nama_query->execute();
+$nama_result = $nama_query->get_result();
+$nama_profile = '';
+
+if ($nama_row = $nama_result->fetch_assoc()) {
+    $nama_profile = htmlspecialchars($nama_row['nama']);
+}
 
 // Memproses data form ketika ada request POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Mengamankan input dari form menggunakan mysqli_real_escape_string untuk mencegah SQL injection
-    $judul_pelatihan = mysqli_real_escape_string($conn, $_POST['judulPelatihan']);
-    $jenis_pelatihan = mysqli_real_escape_string($conn, $_POST['jenisPelatihan']);
-    $nama_peserta = isset($_POST['namaPeserta']) ? implode(", ", $_POST['namaPeserta']) : '';
-    $lembaga = mysqli_real_escape_string($conn, $_POST['lembaga']);
-    $jurusan = mysqli_real_escape_string($conn, $_POST['jurusan']);
-    $program_studi = mysqli_real_escape_string($conn, $_POST['programStudi']);
-    $tanggal_mulai = mysqli_real_escape_string($conn, $_POST['tanggalMulai']);
-    $tanggal_selesai = mysqli_real_escape_string($conn, $_POST['tanggalSelesai']);
-    $tempat = mysqli_real_escape_string($conn, $_POST['tempat']);
-    $sumber_dana = mysqli_real_escape_string($conn, $_POST['sumberDana']);
-    $manajer_pembimbing = mysqli_real_escape_string($conn, $_POST['manajer_pembimbing']);
-    $target = mysqli_real_escape_string($conn, $_POST['target']);
+    try {
+        // Validasi input
+        $required_fields = ['judulPelatihan', 'jenisPelatihan', 'lembaga', 'jurusan_id', 'program_studi_id', 
+                          'tanggalMulai', 'tanggalSelesai', 'tempat', 'sumberDana', 'manajer_pembimbing', 'target'];
+        
+        foreach ($required_fields as $field) {
+            if (!isset($_POST[$field]) || empty(trim($_POST[$field]))) {
+                throw new Exception("Field $field harus diisi");
+            }
+        }
 
-    // Log input data
-    error_log("Form Data: " . print_r($_POST, true));
+        // Mengamankan input dari form menggunakan prepared statement
+        $stmt = $conn->prepare("INSERT INTO usulan_pelatihan (user_id, judul_pelatihan, jenis_pelatihan, nama_peserta, 
+                              lembaga, jurusan_id, program_studi_id, tanggal_mulai, tanggal_selesai, tempat, sumber_dana, 
+                              manajer_pembimbing, target, status, lpj_status) 
+                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'On Progress', 'Belum Diajukan')");
+        
+        $nama_peserta = isset($_POST['namaPeserta']) ? implode(", ", array_map('htmlspecialchars', $_POST['namaPeserta'])) : '';
+        
+        $stmt->bind_param("issssssssssss", 
+            $user_id,
+            $_POST['judulPelatihan'],
+            $_POST['jenisPelatihan'],
+            $nama_peserta,
+            $_POST['lembaga'],
+            $_POST['jurusan_id'],
+            $_POST['program_studi_id'],
+            $_POST['tanggalMulai'],
+            $_POST['tanggalSelesai'],
+            $_POST['tempat'],
+            $_POST['sumberDana'],
+            $_POST['manajer_pembimbing'],
+            $_POST['target']
+        );
 
-    // Query SQL untuk menyimpan data usulan pelatihan ke database
-    $nik = $_SESSION['session_nik'];  // Retrieve nik from session
+        if ($stmt->execute()) {
+            echo json_encode(['success' => true, 'message' => 'Form usulan pelatihan berhasil diajukan!']);
+            exit();
+        } else {
+            throw new Exception("Error dalam menyimpan data: " . $stmt->error);
+        }
 
-    // Query to get user_id from user table based on nik
-    $sqlUserId = "SELECT user_id FROM user WHERE nik = '$nik'";
-    $resultUserId = $conn->query($sqlUserId);
-    if ($resultUserId->num_rows > 0) {
-        $row = $resultUserId->fetch_assoc();
-        $user_id = $row['user_id'];
-    } else {
-        die("User ID not found for NIK: $nik");
-    }
-
-    $sql = "INSERT INTO usulan_pelatihan (user_id, judul_pelatihan, jenis_pelatihan, nama_peserta, lembaga, jurusan, program_studi, tanggal_mulai, tanggal_selesai, tempat, sumber_dana, manajer_pembimbing, target, status, lpj_status)
-            VALUES ('$user_id', '$judul_pelatihan', '$jenis_pelatihan', '$nama_peserta', '$lembaga', '$jurusan', '$program_studi', '$tanggal_mulai', '$tanggal_selesai', '$tempat', '$sumber_dana', '$manajer_pembimbing', '$target', 'On Progress', 'Belum Diajukan')";
-
-    // Log SQL query
-    error_log("SQL Query: " . $sql);
-
-    // Mengeksekusi query dan menangani hasilnya
-    if ($conn->query($sql) === TRUE) {
-        // Return a JSON response
-        echo json_encode(['success' => true, 'message' => 'Form usulan pelatihan berhasil diajukan!']);
-        exit(); // Stop further execution
-    } else {
-        error_log("Error: " . $sql . " - " . $conn->error);  // Mencatat error ke log sistem
-        echo json_encode(['success' => false, 'message' => 'Error: ' . $conn->error]);  // Return error message as JSON
+    } catch (Exception $e) {
+        error_log("Error in form submission: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        exit();
     }
 }
 ?>
@@ -116,7 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="/assets/css/style.css">                                          <!-- Import file CSS utama -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap">  <!-- Import font Poppins dari Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">    <!-- Import Font Awesome untuk ikon -->
-    <script src="/assets/js/form-usulan.js"></script>                                            <!-- Import file JavaScript untuk form -->
+    <script src="/assets/js/form_usulan.js"></script>                                            <!-- Import file JavaScript untuk form -->
     <title>Form Usulan Pelatihan</title>                                                         <!-- Judul halaman web -->
     <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">          <!-- Favicon untuk tab browser -->
     <meta name="msapplication-TileColor" content="#ffffff">                                       <!-- Warna tile untuk Windows -->
@@ -136,7 +157,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <img class="logo" src="/assets/images/Logo_Ajukan.png" alt="Ajukan" style="width: fit-content;">    <!-- Logo aplikasi -->
         <div class="profile">
             <img class="profile-image" src="https://web.rupa.ai/wp-content/uploads/2023/08/aruna3619_Elegant_black_and_white_profesional_photo_of_a_young__46c0ef4a-ba0a-4e23-af98-c824d9b7127d.png" alt="Profile Image">    <!-- Gambar profil pengguna -->
-            <p class="profile-name"><?php echo $nama_profile; ?></p>                       <!-- Menampilkan nama pengguna -->
+            <p class="profile-name"><?php echo htmlspecialchars($nama_profile); ?></p>                       <!-- Menampilkan nama pengguna -->
         </div>
     </nav>
 
@@ -227,23 +248,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <!-- Dropdown jurusan -->
                 <div class="form-group">
-                    <label for="jurusan">Jurusan</label>                                       <!-- Label untuk dropdown jurusan -->
-                    <select id="jurusan" name="jurusan" required>                             <!-- Dropdown untuk memilih jurusan -->
-                        <option value="" disabled selected>Pilih Jurusan</option>              <!-- Opsi default/placeholder -->
-                        <option value="TI">Teknik Informatika</option>                         <!-- Opsi jurusan TI -->
-                        <option value="TM">Teknik Mesin</option>                              <!-- Opsi jurusan TM -->
-                        <option value="TE">Teknik Elektro</option>                            <!-- Opsi jurusan TE -->
-                        <option value="MB">Manajemen Bisnis</option>                          <!-- Opsi jurusan MB -->
+                    <label for="jurusan_id">Jurusan</label>
+                    <select id="jurusan_id" name="jurusan_id" required onchange="updateProdiOptions()">
+                        <option value="">Pilih Jurusan</option>
+                        <?php 
+                        $sqlJurusan = "SELECT * FROM jurusan ORDER BY nama_jurusan";
+                        $resultJurusan = $conn->query($sqlJurusan);
+                        while ($row = $resultJurusan->fetch_assoc()) {
+                            echo '<option value="' . htmlspecialchars($row['jurusan_id']) . '">' . htmlspecialchars($row['nama_jurusan']) . '</option>';
+                        }
+                        ?>
                     </select>
                 </div>
 
                 <!-- Dropdown program studi -->
                 <div class="form-group">
-                    <label for="programStudi">Program Studi</label>                            <!-- Label untuk dropdown program studi -->
-                    <select id="programStudi" name="programStudi" required>                    <!-- Dropdown untuk memilih program studi -->
-                        <option value="" disabled selected>Pilih Program Studi</option>         <!-- Opsi default/placeholder -->
+                    <label for="program_studi_id">Program Studi</label>
+                    <select id="program_studi_id" name="program_studi_id" required>
+                        <option value="">Pilih Program Studi</option>
                     </select>
                 </div>
+
 
                 <!-- Dropdown pilih manajer -->
                 <div class="form-group">
@@ -325,64 +350,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <!-- Script JavaScript untuk dropdown dinamis dan manajemen peserta -->
                 <script>
-                    // Objek yang berisi daftar program studi untuk setiap jurusan
-                    const programStudiOptions = {
-                        TI: [                                                                      // Program studi untuk jurusan Teknik Informatika
-                            { value: "Teknologi Rekayasa Perangkat Lunak", text: "Teknologi Rekayasa Perangkat Lunak" },
-                            { value: "Teknologi Rekayasa Multimedia", text: "Teknologi Rekayasa Multimedia" },
-                            { value: "Cybersecurity", text: "Rekayasa Keamanan Siber" },
-                            { value: "Animasi", text: "Animasi" },
-                            { value: "Teknik Informatika", text: "Teknik Informatika" },
-                            { value: "Teknologi Geomatika", text: "Teknologi Geomatika" },
-                            { value: "Teknologi Permainan", text: "Teknologi Permainan" },
-                        ],
-                        TM: [                                                                      // Program studi untuk jurusan Teknik Mesin
-                            { value: "Teknik Perawatan Pesawat Udara", text: "Teknik Perawatan Pesawat Udara" },
-                            { value: "Teknik Mesin", text: "Teknik Mesin" },
-                            { value: "Teknologi Rekayasa Konstruksi Perkapalan", text: "Teknologi Rekayasa Konstruksi Perkapalan" },
-                            { value: "Teknologi Rekayasa Pengelasan dan Fabrikasi", text: "Teknologi Rekayasa Pengelasan dan Fabrikasi" },
-                            { value: "Program Profesi Insinyur", text: "Program Profesi Insinyur" },
-                            { value: "Teknologi Rekayasa Metalurgi", text: "Teknologi Rekayasa Metalurgi" },
-                        ],
-                        TE: [                                                                      // Program studi untuk jurusan Teknik Elektro
-                            { value: "Teknik Elektronika Manufaktur", text: "Teknik Elektronika Manufaktur" },
-                            { value: "Teknik Instrumentasi", text: "Teknik Instrumentasi" },
-                            { value: "Teknologi Rekayasa Pembangkit Energi", text: "Teknologi Rekayasa Pembangkit Energi" },
-                            { value: "Teknologi Rekayasa Elektronika", text: "Teknologi Rekayasa Elektronika" },
-                            { value: "Teknik Mekatronika", text: "Teknik Mekatronika" },
-                            { value: "Teknologi Rekayasa Robotika", text: "Teknologi Rekayasa Robotika" },
-                        ],
-                        MB: [                                                                      // Program studi untuk jurusan Manajemen Bisnis
-                            { value: "Akuntansi", text: "Akuntansi" },
-                            { value: "Administrasi Bisnis Terapan", text: "Administrasi Bisnis Terapan" },
-                            { value: "Administrasi Bisnis Terapan International Class", text: "Administrasi Bisnis Terapan International Class" },
-                            { value: "Akuntansi Manajerial", text: "Akuntansi Manajerial" },
-                            { value: "Logistik Perdagangan Internasional", text: "Logistik Perdagangan Internasional" },
-                            { value: "Distribusi Barang", text: "Distribusi Barang" },
-                        ],
-                    };
+                   function updateProdiOptions() {
+    // Mengambil referensi elemen select untuk jurusan dan program studi dari DOM
+    const jurusanSelect = document.getElementById("jurusan_id");                      // Mengambil elemen select jurusan
+    const programStudiSelect = document.getElementById("program_studi_id");            // Mengambil elemen select program studi
 
-                    // Mengambil referensi elemen select untuk jurusan dan program studi dari DOM
-                    const jurusanSelect = document.getElementById("jurusan");                      // Mengambil elemen select jurusan
-                    const programStudiSelect = document.getElementById("programStudi");            // Mengambil elemen select program studi
+    // Mengosongkan dan mereset pilihan program studi
+    programStudiSelect.innerHTML = '<option value="" disabled selected>Pilih Program Studi</option>';
 
-                    // Menambahkan event listener untuk menangani perubahan pada pilihan jurusan
-                    jurusanSelect.addEventListener("change", function () {                         // Ketika jurusan dipilih
-                        const selectedJurusan = this.value;                                        // Mengambil nilai jurusan yang dipilih
+    const selectedJurusan = jurusanSelect.value;  // Mengambil nilai jurusan yang dipilih
 
-                        // Mengosongkan dan mereset pilihan program studi
-                        programStudiSelect.innerHTML = '<option value="" disabled selected>Pilih Program Studi</option>';
+    // Menambahkan opsi program studi berdasarkan jurusan yang dipilih
+    if (selectedJurusan) {
+        fetch(`/get_program_studi.php?jurusan_id=${selectedJurusan}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(prodi => {
+                    const option = document.createElement("option");
+                    option.value = prodi.program_studi_id;
+                    option.textContent = prodi.nama_prodi;
+                    programStudiSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+}
 
-                        // Menambahkan opsi program studi berdasarkan jurusan yang dipilih
-                        if (programStudiOptions[selectedJurusan]) {                                // Jika ada program studi untuk jurusan yang dipilih
-                            programStudiOptions[selectedJurusan].forEach((prodi) => {              // Loop setiap program studi
-                                const option = document.createElement("option");                    // Membuat elemen option baru
-                                option.value = prodi.value;                                        // Mengatur nilai option
-                                option.textContent = prodi.text;                                   // Mengatur teks yang ditampilkan
-                                programStudiSelect.appendChild(option);                            // Menambahkan option ke dalam select
-                            });
-                        }
-                    });
 
                     // Fungsi untuk menambahkan peserta baru ke dalam form
 function addPeserta() {
@@ -426,6 +421,33 @@ function addPeserta() {
                         row.remove();                                                          // Hapus baris peserta
                     } else {
                         alert("Minimal satu peserta harus ada.");                              // Tampilkan peringatan jika hanya 1 peserta
+                    }
+                }
+                </script>
+
+                <script>
+                function updateProdiOptions() {
+                const jurusanId = document.getElementById('jurusan_id').value;
+                const prodiSelect = document.getElementById('program_studi_id');
+                
+                // Clear current options
+                prodiSelect.innerHTML = '<option value="">Pilih Program Studi</option>';
+                
+                if (jurusanId) {
+                    // Fetch program studi for selected jurusan
+                    fetch(`get_prodi.php?jurusan_id=${jurusanId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.forEach(prodi => {
+                                const option = document.createElement('option');
+                                option.value = prodi.program_studi_id;
+                                option.textContent = prodi.nama_program_studi;
+                                prodiSelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                     }
                 }
                 </script>

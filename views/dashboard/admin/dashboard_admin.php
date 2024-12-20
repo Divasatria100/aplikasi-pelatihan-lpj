@@ -39,12 +39,6 @@ if (!$user) {
     exit();
 }
 
-// Cek jika login berhasil
-if (isset($_SESSION['login_success']) && $_SESSION['login_success'] == true) {
-    echo "<script>alert('Login berhasil!');</script>";
-    unset($_SESSION['login_success']);  // Menghapus session login_success setelah notifikasi ditampilkan
-}
-
 // Fetch all users
 $query = "SELECT * FROM user ORDER BY user_id DESC";
 $result = mysqli_query($koneksi, $query);
@@ -138,6 +132,15 @@ $result = mysqli_query($koneksi, $query);
 </head>
 
 <body>
+    <?php 
+    // Menampilkan notifikasi login berhasil
+    if (isset($_SESSION['login_success']) && $_SESSION['login_success'] == true) {
+        echo '<div class="login-notification">
+                <i class="fas fa-check-circle"></i> Login berhasil! Selamat datang ' . $user['nama'] . '
+              </div>';
+        unset($_SESSION['login_success']); // Hapus session setelah ditampilkan
+    }
+    ?>
     <nav class="navbar">
         <img class="logo" src="/assets/images/Logo_Ajukan.png" alt="Ajukan" style="width: fit-content;">
         <div class="profile">

@@ -1109,3 +1109,54 @@ input {
     cursor:          pointer;
     font-size:       16px;
 }
+
+/* Style untuk notifikasi login berhasil */
+.login-notification {
+    position: fixed;
+    top: -100px; /* Mulai dari luar layar */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 1000;
+    opacity: 0;
+    /* Animasi untuk masuk dan keluar */
+    animation: slideDown 0.5s ease forwards,
+               fadeOut 0.5s ease 4.5s forwards,
+               slideUp 0.5s ease 5s forwards;
+}
+
+/* Keyframes untuk animasi slide down */
+@keyframes slideDown {
+    0% {
+        top: -100px;
+        opacity: 0;
+    }
+    100% {
+        top: 20px;
+        opacity: 1;
+    }
+}
+
+/* Keyframes untuk animasi fade out */
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Keyframes untuk animasi slide up */
+@keyframes slideUp {
+    0% {
+        top: 20px;
+    }
+    100% {
+        top: -100px;
+    }
+}

@@ -51,8 +51,8 @@ if ($result->num_rows > 0) {
     $jenisPelatihan = $data['jenis_pelatihan'];        // Jenis pelatihan
     $namaPeserta = explode(',', $data['nama_peserta']); // Array nama peserta
     $lembaga = $data['lembaga'];                       // Nama lembaga
-    $jurusan = $data['jurusan'];                       // Jurusan
-    $programStudi = $data['program_studi'];            // Program studi
+    $jurusan_id = $data['jurusan_id'];                       // Jurusan
+    $program_studi_id = $data['program_studi_id'];            // Program studi
     $tanggalMulai = $data['tanggal_mulai'];           // Tanggal mulai
     $tanggalSelesai = $data['tanggal_selesai'];       // Tanggal selesai
     $tempat = $data['tempat'];                         // Tempat pelatihan
@@ -63,10 +63,31 @@ if ($result->num_rows > 0) {
     $lpjStatus = $data['lpj_status'];                  // Status LPJ
 } else {
     // Set semua variabel ke string kosong jika data tidak ditemukan
-    $judulPelatihan = $jenisPelatihan = $namaPeserta = $lembaga = $jurusan = $programStudi = 
+    $judulPelatihan = $jenisPelatihan = $namaPeserta = $lembaga = $jurusan_id = $program_studi_id = 
     $tanggalMulai = $tanggalSelesai = $tempat = $sumberDana = $namaManajer = 
     $target = $status = $lpjStatus = '';
 }
+
+// Query to get jurusan name
+$sql_jurusan = "SELECT nama_jurusan FROM jurusan WHERE jurusan_id = '$jurusan_id'";
+$result_jurusan = $conn->query($sql_jurusan);
+$jurusan_name = ($result_jurusan && $result_jurusan->num_rows > 0) 
+    ? $result_jurusan->fetch_assoc()['nama_jurusan'] 
+    : 'Jurusan Tidak Ditemukan';
+
+// Query to get program studi name with correct column names
+$sql_prodi = "SELECT nama_program_studi FROM program_studi WHERE program_studi_id = '$program_studi_id'";
+$result_prodi = $conn->query($sql_prodi);
+$prodi_name = ($result_prodi && $result_prodi->num_rows > 0) 
+    ? $result_prodi->fetch_assoc()['nama_program_studi'] 
+    : 'Program Studi Tidak Ditemukan';
+
+// Query to get manager's name from user table
+$sql_manager = "SELECT nama FROM user WHERE user_id = '$namaManajer'";
+$result_manager = $conn->query($sql_manager);
+$manager_name = ($result_manager && $result_manager->num_rows > 0) 
+    ? $result_manager->fetch_assoc()['nama'] 
+    : 'Manajer Tidak Ditemukan';
 
 // Proses submit status usulan
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -127,6 +148,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </a>
         </div>
         <div class="sidebar-menu">
+            <a href="/views/user/identitas.php" class="switch-button">    
+                <span class="fas fa-user"></span>    
+                <span class="label"> Identitas</span>    
+            </a>
+        </div>
+        <div class="sidebar-menu">
             <a href="/views/user/history.php" class="switch-button">
                 <span class="fas fa-clock"></span>                                                <!-- Icon menu history -->
                 <span class="label"> History</span>                                               <!-- Label menu history -->
@@ -152,7 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input type="text" class="form-control" name="judulPelatihan" value="<?php echo $judulPelatihan; ?>" disabled>    <!-- Input judul pelatihan -->
                 </div>
                 <div class="form-group">
-                    <label>Jenis Pelatihan</label <input type="text" class="form-control" name="jenisPelatihan" value="<?php echo $jenisPelatihan; ?>" disabled>    <!-- Input jenis pelatihan -->
+                    <label>Jenis Pelatihan</label> <input type="text" class="form-control" name="jenisPelatihan" value="<?php echo $jenisPelatihan; ?>" disabled>    <!-- Input jenis pelatihan -->
                 </div>
                 <div class="form-group">
                     <label>Nama Peserta</label>                                                   <!-- Label input nama peserta -->
@@ -164,28 +191,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <div class="form-group">
                     <label>Jurusan</label>                                                        <!-- Label input jurusan -->
-                    <input type="text" class="form-control" name="jurusan" value="<?php 
-                        switch ($jurusan) {                                                       // Switch case untuk konversi kode jurusan
-                            case 'TI':
-                                echo 'Teknik Informatika';
-                                break;
-                            case 'TM':
-                                echo 'Teknik Mesin';
-                                break;
-                            case 'TE':
-                                echo 'Teknik Elektro';
-                                break;
-                            case 'MB':
-                                echo 'Manajemen Bisnis';
-                                break;
-                            default:
-                                echo 'Jurusan Tidak Diketahui';
-                        } 
-                    ?>" disabled>                                                                 <!-- Input jurusan -->
+                    <input type="text" class="form-control" name="jurusan" value="<?php echo $jurusan_name; ?>" disabled>    <!-- Input jurusan -->
                 </div>
                 <div class="form-group">
                     <label>Program Studi</label>                                                  <!-- Label input program studi -->
-                    <input type="text" class="form-control" name="programStudi" value="<?php echo $programStudi; ?>" disabled>    <!-- Input program studi -->
+                    <input type="text" class="form-control" name="programStudi" value="<?php echo $prodi_name; ?>" disabled>    <!-- Input program studi -->
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
@@ -207,7 +217,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <div class="form-group">
                     <label>Manajer</label>                                                        <!-- Label input manajer -->
-                    <input type="text" class="form-control" name="namaManajer" value="<?php echo $namaManajer; ?>" disabled>    <!-- Input nama manajer -->
+                    <input type="text" class="form-control" name="namaManajer" value="<?php echo $manager_name; ?>" disabled>    <!-- Input nama manajer -->
                 </div>
                 <div class="form-group">
                     <label>Target</label>                                                         <!-- Label input target -->
@@ -221,15 +231,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <option value="Ditolak" <?php echo $status == 'Ditolak' ? 'selected' : ''; ?>>Ditolak</option> <!-- Opsi ditolak -->
                     </select>
                 </div>
-                <!-- Tombol aksi -->
-                <div class="form-actions">
+                            <!-- Tombol aksi -->
+                            <div class="form-actions">
                     <?php if ($lpjStatus !== 'Disetujui' && $status !== 'Disetujui') { ?> <!-- Cek status LPJ dan status usulan -->
                         <button type="submit" class="training-button">Submit</button>                <!-- Tombol submit form -->
                     <?php } ?>
                     <a href="/views/dashboard/manajer/dashboard_manajer.php" class="training-button">Kembali</a>    <!-- Tombol kembali ke dashboard -->
-                </div>
             </form>
         </div>
     </main>
-</body>
+    </body>
 </html>
