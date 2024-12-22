@@ -233,7 +233,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                             <!-- Tombol aksi -->
                             <div class="form-actions">
-                    <?php if ($lpjStatus !== 'Disetujui' && $status !== 'Disetujui') { ?> <!-- Cek status LPJ dan status usulan -->
+<?php if ($lpjStatus !== 'Disetujui' && $status !== 'Disetujui' && $status !== 'Ditolak') { ?> <!-- Cek status LPJ dan status usulan -->
                         <button type="submit" class="training-button">Submit</button>                <!-- Tombol submit form -->
                     <?php } ?>
                     <a href="/views/dashboard/manajer/dashboard_manajer.php" class="training-button">Kembali</a>    <!-- Tombol kembali ke dashboard -->
