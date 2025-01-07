@@ -281,17 +281,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </select>
                 </div>
 
-                <!-- Input tanggal mulai dan selesai -->
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Tanggal Mulai</label>                                           <!-- Label untuk input tanggal mulai -->
-                        <input type="date" id="tanggalMulai" name="tanggalMulai" class="form-control" required>    <!-- Input field untuk tanggal mulai -->
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>Tanggal Selesai</label>                                         <!-- Label untuk input tanggal selesai -->
-                        <input type="date" id="tanggalSelesai" name="tanggalSelesai" class="form-control" required>    <!-- Input field untuk tanggal selesai -->
-                    </div>
+            <!-- Input tanggal mulai dan selesai -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="tanggalMulai">Tanggal Mulai</label>
+                    <input type="date" id="tanggalMulai" name="tanggalMulai" class="form-control" required>
                 </div>
+                <div class="form-group col-md-6">
+                    <label for="tanggalSelesai">Tanggal Selesai</label>
+                    <input type="date" id="tanggalSelesai" name="tanggalSelesai" class="form-control" required>
+                </div>
+            </div>
+
+            <script>
+                // Mendapatkan tanggal hari ini dalam format yyyy-mm-dd
+                const today = new Date().toISOString().split("T")[0];
+
+                // Mengatur atribut 'min' untuk input tanggal
+                const tanggalMulaiInput = document.getElementById("tanggalMulai");
+                const tanggalSelesaiInput = document.getElementById("tanggalSelesai");
+
+                tanggalMulaiInput.min = today;
+
+                // Tambahkan event listener untuk mengupdate min tanggal selesai
+                tanggalMulaiInput.addEventListener("change", function () {
+                    tanggalSelesaiInput.min = this.value;
+                });
+
+                // Mengatur min awal tanggal selesai sama dengan hari ini
+                tanggalSelesaiInput.min = today;
+            </script>
 
                 <!-- Input tempat/alamat -->
                 <div class="form-group">
