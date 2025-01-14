@@ -71,6 +71,7 @@ $result = mysqli_query($conn, $query);
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/lib/datatables/dataTables.css">
     <script src="/assets/js/script.js"></script>
     <script>
         function showKomentar(komentar) {
@@ -92,6 +93,17 @@ $result = mysqli_query($conn, $query);
     </script>
     <title>Riwayat Pelatihan</title>
     <style>
+        /* Center text in the header cells */
+        #historyTable th {
+            text-align: center;
+        }
+
+        /* Center text in the table body cells */
+        #historyTable td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
         .content-container {
             margin-left: 250px;
             padding: 20px;
@@ -101,6 +113,7 @@ $result = mysqli_query($conn, $query);
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            overflow-x: auto; /* Untuk tabel responsif */
         }
         table {
             width: 100%;
@@ -295,60 +308,68 @@ $result = mysqli_query($conn, $query);
     </div>
 
     <!-- Konten Utama -->
-    <div class="content-container">
-        <h1 class="page-title">Riwayat Pelatihan Selesai</h1>
-        
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Judul Pelatihan</th>
-                        <th>Jenis Kegiatan</th>
-                        <th>Nama Peserta</th>
-                        <th>Tanggal Mulai</th>
-                        <th>Pengajuan</th>
-                        <th>LPJ</th>
-                        <th>Dokumen</th>
-                        <th>Komentar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    if (mysqli_num_rows($result) > 0) {
-                        $no = 1;
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            echo "<tr>";
-                            echo "<td>" . $no++ . "</td>";
-                            echo "<td>" . htmlspecialchars($row['judul_pelatihan']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['jenis_pelatihan']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['nama_peserta']) . "</td>";
-                            echo "<td>" . date('d-m-Y', strtotime($row['tanggal_mulai'])) . "</td>";
-                            echo "<td><span class='status-disetujui'>Selesai</span></td>";
-                            echo "<td><span class='status-disetujui'>Selesai</span></td>";
-                            echo "<td>";
-                            if (!empty($row['lpj_file'])) {
-                                echo "<a href='/views/user/uploads/" . htmlspecialchars($row['lpj_file']) . "' class='btn-download' download>LPJ</a> ";
+    <main>
+        <!-- Training Table Card -->
+        <div class="card totall">
+            <div class="info">
+                <div class="info-detail"></div>
+            </div>
+            <div class="card detail">
+                <div class="detail-header">
+                    <h2>Riwayat Pelatihan Selesai</h2>
+                </div>
+                <!-- Training Data Table -->
+                <table id="historyTable" class="display">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Judul Pelatihan</th>
+                            <th>Jenis Kegiatan</th>
+                            <th>Nama Peserta</th>
+                            <th>Tanggal Mulai</th>
+                            <th>Pengajuan</th>
+                            <th>LPJ</th>
+                            <th>Dokumen</th>
+                            <th>Komentar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        if (mysqli_num_rows($result) > 0) {
+                            $no = 1;
+                            while ($row = mysqli_fetch_assoc($result)) {
+                                echo "<tr>";
+                                echo "<td>" . $no++ . "</td>";
+                                echo "<td>" . htmlspecialchars($row['judul_pelatihan']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['jenis_pelatihan']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['nama_peserta']) . "</td>";
+                                echo "<td>" . date('d-m-Y', strtotime($row['tanggal_mulai'])) . "</td>";
+                                echo "<td><span class='status-disetujui'>Selesai</span></td>";
+                                echo "<td><span class='status-disetujui'>Selesai</span></td>";
+                                echo "<td>";
+                                if (!empty($row['lpj_file'])) {
+                                    echo "<a href='/views/user/uploads/" . htmlspecialchars($row['lpj_file']) . "' class='btn-download' download>LPJ</a> ";
+                                }
+                                if (!empty($row['sertifikat_file'])) {
+                                    echo "<a href='/views/user/uploads/sertifikat/" . htmlspecialchars($row['sertifikat_file']) . "' class='btn-download' download>Sertifikat</a>";
+                                }
+                                echo "</td>";
+                                echo "<td>";
+                                echo "<button class='btn-komentar' onclick='showKomentar(`" . htmlspecialchars($row['komentar'], ENT_QUOTES) . "`)'>";
+                                echo "<i class='fas fa-comment'></i> Lihat";
+                                echo "</button>";
+                                echo "</td>";
+                                echo "</tr>";
                             }
-                            if (!empty($row['sertifikat_file'])) {
-                                echo "<a href='/views/user/uploads/sertifikat/" . htmlspecialchars($row['sertifikat_file']) . "' class='btn-download' download>Sertifikat</a>";
-                            }
-                            echo "</td>";
-                            echo "<td>";
-                            echo "<button class='btn-komentar' onclick='showKomentar(`" . htmlspecialchars($row['komentar'], ENT_QUOTES) . "`)'>";
-                            echo "<i class='fas fa-comment'></i> Lihat";
-                            echo "</button>";
-                            echo "</td>";
-                            echo "</tr>";
+                        } else {
+                            echo "<tr><td colspan='9' style='text-align: center;'>Belum ada riwayat pelatihan yang selesai</td></tr>";
                         }
-                    } else {
-                        echo "<tr><td colspan='7' style='text-align: center;'>Belum ada riwayat pelatihan yang selesai</td></tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
+                        ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    </main>
 
     <!-- Modal Komentar -->
     <div id="komentarModal" class="modal">
@@ -359,16 +380,24 @@ $result = mysqli_query($conn, $query);
         </div>
     </div>
 
-    <!-- Modal Komentar -->
-    <div id="komentarModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div class="modal-title">Komentar Manajer</div>
-            <p id="komentarText"></p>
-        </div>
-    </div>
-
+    <!-- Tambahkan jQuery dan DataTables JS -->
+    <script src="/lib/jquery/jquery-3.7.1.js"></script>
+    <script src="/lib/datatables/dataTables.js"></script>
     <script>
+        $(document).ready(function() {
+            $('#historyTable').DataTable({
+                // Konfigurasi tambahan
+                responsive: true,
+                order: [[0, 'asc']], // Urutkan berdasarkan kolom No
+                columnDefs: [
+                    {
+                        targets: [5, 6, 7, 8], // Kolom status dan aksi
+                        orderable: false // Tidak bisa diurutkan
+                    }
+                ]
+            });
+        });
+
         function showKomentar(komentar) {
             document.getElementById('komentarText').innerText = komentar || 'Tidak ada komentar';
             document.getElementById('komentarModal').style.display = 'block';
