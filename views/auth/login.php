@@ -1,4 +1,4 @@
-<?php 
+<?php  
 session_start();  // Memulai session untuk menyimpan data user
 
 // Konfigurasi koneksi database
@@ -15,7 +15,6 @@ if (!$koneksi) {
 
 // Fungsi untuk redirect berdasarkan role
 function redirect_based_on_role($role) {
-    echo "Redirecting based on role: " . $role;
     if ($role == 'karyawan') {
         header("Location: /views/dashboard/karyawan/dashboard_karyawan.php");
     } elseif ($role == 'manajer') {
@@ -28,7 +27,6 @@ function redirect_based_on_role($role) {
 
 // Cek apakah user sudah login (session ada)
 if (isset($_SESSION['session_username'])) {
-    echo "Session found, redirecting...";
     redirect_based_on_role($_SESSION['session_role']);
 }
 
@@ -40,18 +38,20 @@ $ingataku = isset($_POST['ingataku']) ? 1 : 0;                   // Checkbox "in
 
 // Cek cookie untuk fitur "ingat saya"
 if (isset($_COOKIE['cookie_username']) && !isset($_SESSION['session_username'])) {
-    echo "Cookie found, processing...";
     $cookie_username = $_COOKIE['cookie_username'];
     $cookie_password = $_COOKIE['cookie_password'];
 
     // Cek apakah input berupa email atau NIK
     if (filter_var($cookie_username, FILTER_VALIDATE_EMAIL)) {
-        $sql = "SELECT * FROM admin WHERE email = '$cookie_username'";
+        $sql = "SELECT * FROM admin WHERE email = ?";
     } else {
-        $sql = "SELECT * FROM user WHERE nik = '$cookie_username'";
+        $sql = "SELECT * FROM user WHERE nik = ?";
     }
 
-    $result = mysqli_query($koneksi, $sql);
+    $stmt = mysqli_prepare($koneksi, $sql);
+    mysqli_stmt_bind_param($stmt, "s", $cookie_username);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     $data = mysqli_fetch_array($result);
 
     if ($data && md5($data['password']) == $cookie_password) {
@@ -72,44 +72,35 @@ if (isset($_POST['login'])) {
     $password = isset($_POST['password']) ? $_POST['password'] : '';
     $ingataku = isset($_POST['ingataku']) ? 1 : 0;
 
-    // Debug line
-    echo "Attempting login with username: $username<br>";
-
     // Validasi form
     if ($username == '' || $password == '') {
         $err .= "<li>Silakan masukkan NIK/Email dan password.</li>";
     } else {
         // Determine if input is email or NIK
         if (filter_var($username, FILTER_VALIDATE_EMAIL)) {
-            $sql = "SELECT * FROM admin WHERE email = '$username'";
-            echo "Checking admin table<br>"; // Debug line
+            $sql = "SELECT * FROM admin WHERE email = ?";
         } else {
-            $sql = "SELECT * FROM user WHERE nik = '$username'";
-            echo "Checking user table<br>"; // Debug line
+            $sql = "SELECT * FROM user WHERE nik = ?";
         }
 
-        $result = mysqli_query($koneksi, $sql);
+        $stmt = mysqli_prepare($koneksi, $sql);
+        mysqli_stmt_bind_param($stmt, "s", $username);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
         $data = mysqli_fetch_array($result);
 
         if (!$data) {
             $err .= "<li>Username/Email tidak ditemukan.</li>";
-            echo "No user found<br>"; // Debug line
         } else {
-            echo "User found. Stored password: " . substr($data['password'], 0, 20) . "...<br>"; // Debug line
-            
             $loginSuccess = false;
 
             // Try password_verify first
             if (password_verify($password, $data['password'])) {
-                echo "Password verified with password_verify<br>"; // Debug line
                 $loginSuccess = true;
             } 
             // If that fails and it's a user account, try MD5
             else if (!filter_var($username, FILTER_VALIDATE_EMAIL) && md5($password) === $data['password']) {
-                echo "Password verified with MD5<br>"; // Debug line
                 $loginSuccess = true;
-            } else {
-                echo "Password verification failed<br>"; // Debug line
             }
 
             if ($loginSuccess) {
@@ -119,8 +110,6 @@ if (isset($_POST['login'])) {
                 $_SESSION['session_nama'] = $data['nama'];
                 $_SESSION['session_nik'] = $data['nik'] ?? null;
                 $_SESSION['login_success'] = true;
-
-                echo "Login success. Role: " . $_SESSION['session_role'] . "<br>"; // Debug line
 
                 if ($ingataku == 1) {
                     setcookie('cookie_username', $username, time() + (60 * 60 * 24 * 30), "/");
@@ -133,11 +122,6 @@ if (isset($_POST['login'])) {
             }
         }
     }
-}
-
-// Tambahkan pesan kesalahan jika ada
-if ($err != '') {
-    echo '<ul>' . $err . '</ul>';
 }
 ?>
 
@@ -323,4 +307,3 @@ if (isset($_SESSION['login_success']) && $_SESSION['login_success'] == true) {
     </div>
 </body>
 </html>
-
