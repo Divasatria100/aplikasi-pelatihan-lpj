@@ -225,13 +225,30 @@ if (!$result_usulan) {
                                     </span>
                                 </td>
                                 <td>
+
+
                                     <?php if ($row['status'] === 'Disetujui' && !$row['lpj_submitted']) { ?>
-                                        <span class="status on-progress"><i class="fas fa-spinner"></i> On Progress</span> <!-- Status progress LPJ -->
+                                        <span class="status onprogress"><i class="fas fa-circle"></i> Sedang Ditinjau</span> <!-- Status progress LPJ -->
+
+
                                     <?php } else { ?>
-                                        <span class="status <?= strtolower(str_replace(' ', '', htmlspecialchars($row['lpj_status']))) ?>">
+                                        <?php 
+                                            // Determine the class based on lpj_status
+                                            $statusClass = '';
+                                            if ($row['lpj_status'] === 'Revisi' || $row['lpj_status'] === 'Sedang Ditinjau') {
+                                                $statusClass = 'status revisi'; // Yellow color for "Revisi" and "Sedang Ditinjau"
+                                            } elseif ($row['lpj_status'] === 'Belum Diajukan') {
+                                                $statusClass = 'status'; // Default color for "Belum Diajukan"
+                                            } elseif ($row['lpj_status'] === 'Disetujui') {
+                                                $statusClass = 'status disetujui'; // Default color for "Belum Diajukan"
+                                            }
+                                        ?>
+                                        <span class="<?= $statusClass ?>">
                                             <i class="fas fa-circle"></i> <?= htmlspecialchars($row['lpj_status']) ?> <!-- Status persetujuan LPJ -->
                                         </span>
                                     <?php } ?>
+
+                                    
                                 </td>
                                 <td>
                                     <?php 
@@ -241,12 +258,12 @@ if (!$result_usulan) {
                                         } elseif ($row['lpj_status'] === 'Revisi') {
                                             echo '<a href="/views/user/lpj_karyawan.php?id=' . urlencode($row['id']) . '" class="detailButton">Ajukan LPJ</a>';
                                         } elseif ($row['lpj_submitted']) {
-                                            echo '<span class="status completed"><i class="fas fa-check-circle"></i> Diajukan</span>';
+                                            echo '<span class="status completed" style="color: #28a745;"><i class="fas fa-circle"></i> Diajukan</span>';
                                         } else {
                                             echo '<a href="/views/user/lpj_karyawan.php?id=' . urlencode($row['id']) . '" class="detailButton">Ajukan LPJ</a>';
                                         }
                                     } else {
-                                        echo '<span class="status pending"><i class="fas fa-clock"></i> Waiting</span>';
+                                        echo '<span class="status pending" style="color: #002855;"><i class="fas fa-circle"></i> Menunggu</span>';
                                     }
                                     ?>
                                 </td>

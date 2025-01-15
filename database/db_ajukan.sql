@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 31, 2024 at 06:23 AM
+-- Generation Time: Jan 15, 2025 at 09:32 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -158,13 +158,13 @@ CREATE TABLE `usulan_pelatihan` (
   `manajer_pembimbing` varchar(255) DEFAULT NULL,
   `target` varchar(255) DEFAULT NULL,
   `lpj_submitted` tinyint(1) DEFAULT 0,
-  `status` enum('On Progress','Pending','Disetujui','Ditolak') DEFAULT 'On Progress',
+  `status` enum('Sedang Ditinjau','Pending','Disetujui','Ditolak') DEFAULT 'Sedang Ditinjau',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `komentar` text DEFAULT NULL,
   `lpj_file` varchar(255) DEFAULT NULL,
   `tanggal_upload` datetime DEFAULT NULL,
-  `lpj_status` enum('Belum Diajukan','On Progress','Disetujui','Revisi') DEFAULT NULL,
+  `lpj_status` enum('Belum Diajukan','Sedang Ditinjau','Disetujui','Revisi') DEFAULT NULL,
   `sertifikat_file` varchar(255) DEFAULT NULL,
   `user_id` int(11) NOT NULL,
   `jurusan_id` int(11) DEFAULT NULL,
@@ -176,12 +176,14 @@ CREATE TABLE `usulan_pelatihan` (
 --
 
 INSERT INTO `usulan_pelatihan` (`id`, `judul_pelatihan`, `jenis_pelatihan`, `nama_peserta`, `lembaga`, `tanggal_mulai`, `tanggal_selesai`, `tempat`, `sumber_dana`, `manajer_pembimbing`, `target`, `lpj_submitted`, `status`, `created_at`, `updated_at`, `komentar`, `lpj_file`, `tanggal_upload`, `lpj_status`, `sertifikat_file`, `user_id`, `jurusan_id`, `program_studi_id`) VALUES
-(7, 'Pelatihan Public Speaking', 'Pelatihan', 'Diva Satria, Muhammad Arif, Thalita Aurelia Marsim', 'Politeknik Negeri Batam', '2024-12-31', '2024-12-29', 'TEST', '000000', '3', 'TEST', 0, 'Disetujui', '2024-12-20 08:21:34', '2024-12-20 08:30:21', NULL, NULL, NULL, 'Belum Diajukan', NULL, 4, 1, 1),
-(8, 'Seminar Dunia', 'Seminar', 'Hafis', 'Politeknik Negeri Batam', '2024-12-20', '2024-12-31', 'Batam', '12345', '5', 'TEST', 0, 'Ditolak', '2024-12-20 08:22:11', '2024-12-22 17:50:55', NULL, NULL, NULL, 'Belum Diajukan', NULL, 4, 3, 19),
-(9, 'Pelatihan Hacking', 'Pelatihan', 'Arshafin , Hafis', 'Politeknik Negeri Batam', '2024-12-24', '2024-12-26', 'KDA', '54321', '5', 'TEST', 1, 'Disetujui', '2024-12-20 08:23:44', '2024-12-20 08:46:56', 'Halo guys', 'LPJ_67652ed2b683a.pdf', '2024-12-20 15:46:10', 'Disetujui', 'Sertifikat_67652ed2b7ab2.jpeg', 2, 1, 3),
-(10, 'Workshop BLUG', 'Workshop', 'bob marley', 'Politeknik Negeri Batam', '2024-12-25', '2024-12-30', 'Batam', '12345', '5', 'TEST', 1, 'Disetujui', '2024-12-20 08:28:39', '2024-12-20 08:40:37', 'TEST', 'LPJ_67652d60f23df.pdf', '2024-12-20 15:40:00', 'Disetujui', 'Sertifikat_67652d6100781.png', 6, 1, 5),
-(11, 'Pelatihan Teknik Informatika', 'Pelatihan', 'Arjuna, Salahuddin', 'Politeknik Negeri Batam', '2024-12-28', '2024-12-29', 'Batam centre', '12321', '5', 'TEST', 1, 'Disetujui', '2024-12-27 13:30:09', '2024-12-27 13:32:07', '', 'LPJ_676eac289ecac.pdf', '2024-12-27 20:31:20', 'Disetujui', 'Sertifikat_676eac28a0f5e.png', 2, 1, 5),
-(12, 'BLUG Project', 'Pelatihan', 'Diva Satria, jeremy', 'Politeknik Negeri Batam', '2024-12-28', '2024-12-30', 'TEST', '000000', '5', 'TEST', 1, 'Disetujui', '2024-12-27 14:06:20', '2024-12-27 14:08:24', NULL, 'LPJ_676eb4d81ab06.pdf', '2024-12-27 21:08:24', 'On Progress', 'Sertifikat_676eb4d81f063.pdf', 2, 1, 3);
+(20, 'Pelatihan Disetujui', 'Pelatihan', 'Alexis', 'Polibatam', '2025-01-15', '2025-01-22', 'aa', 'aa', '3', 'aa', 1, 'Disetujui', '2025-01-15 08:15:25', '2025-01-15 08:18:13', '', 'LPJ_67876f0085af6.pdf', '2025-01-15 15:17:04', 'Disetujui', 'Sertifikat_67876f0088ecc.pdf', 2, 1, 1),
+(21, 'Pelatihan Ditolak', 'Pelatihan', 'Henry', 'Polibatam', '2025-01-15', '2025-01-23', 'aa', 'aa', '3', 'aa', 0, 'Ditolak', '2025-01-15 08:15:57', '2025-01-15 08:16:18', NULL, NULL, NULL, 'Belum Diajukan', NULL, 2, 1, 2),
+(22, 'Pelatihan 1', 'Pelatihan', 'Nolan', 'Polibatam', '2025-01-15', '2025-01-22', 'aa', 'aa', '3', 'aa', 0, 'Disetujui', '2025-01-15 08:26:28', '2025-01-15 08:29:21', NULL, NULL, NULL, 'Belum Diajukan', NULL, 2, 3, 18),
+(23, 'Pelatihan 2', 'Pelatihan', 'Joseph', 'Polibatam', '2025-01-15', '2025-01-23', 'aa', 'aa', '3', 'aa', 0, 'Sedang Ditinjau', '2025-01-15 08:26:54', '2025-01-15 08:26:54', NULL, NULL, NULL, 'Belum Diajukan', NULL, 2, 2, 8),
+(24, 'Pelatihan 3', 'Pelatihan', 'Baron', 'Polibatam', '2025-01-15', '2025-01-23', 'aa', 'aa', '3', 'aa', 0, 'Ditolak', '2025-01-15 08:27:36', '2025-01-15 08:29:26', NULL, NULL, NULL, 'Belum Diajukan', NULL, 2, 4, 22),
+(25, 'Pelatihan 4', 'Pelatihan', 'Cole', 'Polibatam', '2025-01-15', '2025-01-23', 'aa', 'aa', '3', 'aa', 1, 'Disetujui', '2025-01-15 08:27:59', '2025-01-15 08:30:30', 'dfs', 'LPJ_67877209a7f18.pdf', '2025-01-15 15:30:01', 'Disetujui', 'Sertifikat_67877209a91df.pdf', 2, 1, 3),
+(26, 'Pelatihan 5', 'Pelatihan', 'Ash', 'Polibatam', '2025-01-16', '2025-01-28', 'aa', 'aa', '3', 'aa', 1, 'Disetujui', '2025-01-15 08:28:31', '2025-01-15 08:30:36', 'fsefse', 'LPJ_67877212b5db4.pdf', '2025-01-15 15:30:10', 'Revisi', 'Sertifikat_67877212b6b80.pdf', 2, 1, 4),
+(27, 'Pelatihan 6', 'Pelatihan', 'Bruce', 'Polibatam', '2025-01-15', '2025-01-23', 'aa', 'aa', '3', 'a', 0, 'Sedang Ditinjau', '2025-01-15 08:29:00', '2025-01-15 08:29:00', NULL, NULL, NULL, 'Belum Diajukan', NULL, 2, 3, 18);
 
 --
 -- Indexes for dumped tables
@@ -257,7 +259,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `usulan_pelatihan`
 --
 ALTER TABLE `usulan_pelatihan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- Constraints for dumped tables

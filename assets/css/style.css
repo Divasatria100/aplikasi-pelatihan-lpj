@@ -333,13 +333,13 @@ main {
     letter-spacing: 1px;                /* Jarak antar huruf */
     font-size: 0.7rem;                  /* Ukuran font */
     display: block;                     /* Tampilan blok */
+    color: #002855;
 }
 
 /* Status badge variants - Variasi badge status */
 .onprogress {
     position: static;                   /* Posisi statis */
-    background-color: #fff2d7;         /* Warna latar kuning muda */
-    color: #ffa705;                    /* Warna teks oranye */
+    color: #ffc107;                    /* Warna teks oranye */
 }
 
 .confirmed {
@@ -355,6 +355,11 @@ main {
 .submitted {
     background-color: lightgray;       /* Warna latar abu-abu muda */
     color: gray;                       /* Warna teks abu-abu */
+}
+
+/* New CSS class for additional status */
+.status.additional {
+    color: #28a745; /* Example color for additional status */
 }
 
 /* Customer section layout - Tata letak bagian pelanggan */
@@ -1003,6 +1008,27 @@ input {
 
 .status.menunggu {
     color: #ffc107;
+}
+
+.status.belum {
+    color: #002855;
+}
+
+.status.revisi {
+    color: #ffc107;
+}
+
+.status.pending {
+    color: #002855;
+}
+
+.status.waiting {
+    color: #002855;
+}
+
+/* New CSS class for additional status */
+.status.additional {
+    color: #28a745; /* Example color for additional status */
 }
 
 /*identitas setting css*/

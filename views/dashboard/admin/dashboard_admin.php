@@ -1,45 +1,52 @@
 <?php 
+// Memulai session PHP untuk manajemen sesi pengguna
 session_start();
 
-// Memastikan pengguna sudah login sebagai admin
+// Memeriksa apakah pengguna sudah login dan memiliki role admin
+// Jika tidak, redirect ke halaman login
 if (!isset($_SESSION['user_id']) || $_SESSION['session_role'] != 'admin') {
     header("Location: /views/auth/login.php");
     exit();
 }
 
-// Mengambil user_id dari session
+// Mengambil ID pengguna dari session yang sedang aktif
 $user_id = $_SESSION['user_id'];
 
-// Koneksi database
-$host = "localhost";
-$username = "root";
-$password = "";
-$database = "db_ajukan";
+// Konfigurasi koneksi database
+$host = "localhost";          // Host database (biasanya localhost)
+$username = "root";           // Username default XAMPP
+$password = "";              // Password default XAMPP (kosong)
+$database = "db_ajukan";     // Nama database yang digunakan
 $koneksi = mysqli_connect($host, $username, $password, $database);
 
+// Memeriksa koneksi database
+// Jika gagal, tampilkan pesan error
 if (!$koneksi) {
     die("Koneksi gagal: " . mysqli_connect_error());
 }
 
-// Query untuk mengambil data pengguna berdasarkan user_id
+// Query untuk mengambil data admin berdasarkan admin_id
 $query = "SELECT admin_id, nama, email, password, nomor_telepon 
         FROM admin 
         WHERE admin_id = '$user_id'";
 $result = mysqli_query($koneksi, $query);
 
-// Memeriksa apakah query berhasil
+// Memeriksa apakah query berhasil dijalankan
+// Jika gagal, tampilkan pesan error
 if (!$result) {
     die("Query gagal dijalankan: " . mysqli_error($koneksi));
 }
 
-// Memeriksa apakah data pengguna ditemukan
+// Memeriksa apakah data admin ditemukan
+// Jika tidak ditemukan, tampilkan pesan error
 $user = mysqli_fetch_assoc($result);
 if (!$user) {
     echo "Data pengguna tidak ditemukan.";
     exit();
 }
 
-// Fetch all users
+// Query untuk mengambil semua data user
+// Diurutkan berdasarkan user_id secara descending (terbaru dulu)
 $query = "SELECT * FROM user ORDER BY user_id DESC";
 $result = mysqli_query($koneksi, $query);
 ?>
@@ -49,42 +56,48 @@ $result = mysqli_query($koneksi, $query);
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">                                                         <!-- Pengaturan karakter encoding UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">        <!-- Pengaturan viewport untuk responsif -->
     
-    <link rel="stylesheet" href="/assets/css/style.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Import file CSS dan font -->
+    <link rel="stylesheet" href="/assets/css/style.css">                          <!-- CSS utama -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap">    <!-- Font Poppins -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">      <!-- Font Awesome icons -->
     
-    <script src="/assets/js/script.js"></script>
+    <!-- Import JavaScript -->
+    <script src="/assets/js/script.js"></script>                                  <!-- JavaScript utama -->
     
-    <link rel="stylesheet" href="/lib/datatables/dataTables.css">
+    <!-- Import DataTables CSS -->
+    <link rel="stylesheet" href="/lib/datatables/dataTables.css">                 <!-- CSS DataTables -->
     
-    <title>Dashboard admin</title>
+    <title>Dashboard admin</title>                                                <!-- Judul halaman -->
     
+    <!-- Favicon dan pengaturan tema -->
     <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
-    <!-- DataTables CSS -->
+
+    <!-- CSS untuk styling tabel dan komponen lainnya -->
     <style>
-        /* Center text in the header cells */
+        /* Perataan teks di header tabel */
         #myTable th {
             text-align: center;
         }
 
-        /* Center text in the table body cells */
+        /* Perataan teks di sel tabel */
         #myTable td {
             text-align: center;
-            vertical-align: middle; /* Agar teks berada di tengah secara vertikal */
+            vertical-align: middle;
         }
 
-        /* Optional: Style untuk tombol link */
+        /* Style untuk tombol */
         .edit-btn, .detailButton {
             display: inline-block;
             padding: 5px 10px;
             text-align: center;
         }
 
+        /* Container untuk tabel */
         .table-container {
             padding: 20px;
             background: white;
@@ -92,11 +105,13 @@ $result = mysqli_query($koneksi, $query);
             margin: 20px;
         }
         
+        /* Style dasar tabel */
         table {
             width: 100%;
             border-collapse: collapse;
         }
         
+        /* Style untuk header tabel */
         th {
             background-color: #f8f9fa;
             padding: 12px;
@@ -104,16 +119,19 @@ $result = mysqli_query($koneksi, $query);
             border-bottom: 2px solid #dee2e6;
         }
         
+        /* Style untuk sel tabel */
         td {
             padding: 12px;
             border-bottom: 1px solid #dee2e6;
         }
         
+        /* Container untuk tombol aksi */
         .action-buttons {
             display: flex;
             gap: 10px;
         }
         
+        /* Style untuk link tombol aksi */
         .action-buttons a {
             padding: 5px 10px;
             border-radius: 4px;
@@ -121,10 +139,12 @@ $result = mysqli_query($koneksi, $query);
             color: white;
         }
         
+        /* Warna untuk tombol edit */
         .edit-btn {
             background-color: #007bff;
         }
         
+        /* Warna untuk tombol delete */
         .delete-btn {
             background-color: #dc3545;
         }
@@ -133,14 +153,15 @@ $result = mysqli_query($koneksi, $query);
 
 <body>
     <?php 
-    // Menampilkan notifikasi login berhasil
+    // Menampilkan notifikasi ketika login berhasil
     if (isset($_SESSION['login_success']) && $_SESSION['login_success'] == true) {
         echo '<div class="login-notification">
                 <i class="fas fa-check-circle"></i> Login berhasil! Selamat datang ' . $user['nama'] . '
               </div>';
-        unset($_SESSION['login_success']); // Hapus session setelah ditampilkan
+        unset($_SESSION['login_success']); // Menghapus session notifikasi
     }
     ?>
+    <!-- Navbar dengan logo dan profil -->
     <nav class="navbar">
         <img class="logo" src="/assets/images/Logo_Ajukan.png" alt="Ajukan" style="width: fit-content;">
         <div class="profile">
@@ -149,10 +170,13 @@ $result = mysqli_query($koneksi, $query);
         </div>
     </nav>
 
+    <!-- Toggle untuk sidebar mobile -->
     <input type="checkbox" id="toggle">
     <label for="toggle" class="side-toggle">&#9776;</label>
 
+    <!-- Sidebar dengan menu navigasi -->
     <div class="sidebar">
+        <!-- Menu Dashboard -->
         <div class="sidebar-menu">
             <a href="/views/dashboard/admin/dashboard_admin.php" class="switch-button active">
                 <span class="fas fa-home"></span>
@@ -160,6 +184,7 @@ $result = mysqli_query($koneksi, $query);
             </a>
         </div>
         
+        <!-- Menu Logout -->
         <div class="sidebar-menu">
             <a href="/views/auth/logout.php" class="switch-button">
                 <span class="fas fa-sign-out-alt"></span>
@@ -173,12 +198,13 @@ $result = mysqli_query($koneksi, $query);
     <!-- Konten Utama -->
     <main>
     <div class="banner-card"></div>
+        <!-- Container untuk tombol aksi -->
         <div class="dashboard-container1">
-            <!-- Training Proposal Button Card -->
             <div class="card totall">
                 <div class="info">
                     <div class="info-detail">
     <div class="info-detail">
+        <!-- Tombol untuk membuat data user baru -->
         <div class="button-container">
             <a href="/views/administrator/form_user.php">
                 <button class="training-button">
@@ -186,6 +212,7 @@ $result = mysqli_query($koneksi, $query);
                 </button>
             </a>
         </div>
+        <!-- Tombol untuk mengelola jurusan -->
         <div class="button-container">
             <a href="/views/administrator/kelola_jurusan.php">
                 <button class="training-button">
@@ -194,10 +221,11 @@ $result = mysqli_query($koneksi, $query);
             </a>
         </div>
     </div>
+    <!-- Style untuk container tombol -->
     <style>
         .button-container {
             display: inline-block;
-            margin-right: 10px; /* Adjust spacing between buttons */
+            margin-right: 10px;
         }
     </style>
                     </div>
@@ -205,7 +233,7 @@ $result = mysqli_query($koneksi, $query);
             </div>
         </div>
         <br>
-        <!-- Training Table Card -->
+        <!-- Card untuk tabel user -->
         <div class="card totall">
             <div class="info">
                 <div class="info-detail"></div>
@@ -214,7 +242,7 @@ $result = mysqli_query($koneksi, $query);
                 <div class="detail-header">
                     <h2>Tabel User</h2>
                 </div>
-                <!-- Training Data Table -->
+                <!-- Tabel data user -->
                 <div class="table-container">
                     <table>
                         <thead>
@@ -232,6 +260,7 @@ $result = mysqli_query($koneksi, $query);
                         <tbody>
                             <?php while($row = mysqli_fetch_assoc($result)) { ?>
                                 <tr>
+                                    <!-- Menampilkan data user dengan escape HTML untuk keamanan -->
                                     <td><?php echo htmlspecialchars($row['nik']); ?></td>
                                     <td><?php echo htmlspecialchars($row['nama']); ?></td>
                                     <td><?php echo htmlspecialchars($row['email']); ?></td>
@@ -240,6 +269,7 @@ $result = mysqli_query($koneksi, $query);
                                     <td><?php echo htmlspecialchars($row['alamat']); ?></td>
                                     <td><?php echo htmlspecialchars($row['role']); ?></td>
                                     <td class="action-buttons">
+                                        <!-- Tombol untuk edit dan hapus user -->
                                         <a href="edit_user.php?id=<?php echo $row['user_id']; ?>" class="edit-btn">Edit</a>
                                         <a href="delete_user.php?id=<?php echo $row['user_id']; ?>" class="delete-btn">Delete</a>
                                     </td>
@@ -251,8 +281,10 @@ $result = mysqli_query($koneksi, $query);
             </div>
         </div>
     </main>
+    <!-- Import library JavaScript -->
     <script src="/lib/jquery/jquery-3.7.1.js"></script>
     <script src="/lib/datatables/dataTables.js"></script>
+    <!-- Inisialisasi DataTables -->
     <script>
             $(document).ready( function () {
                 $('#myTable').DataTable();

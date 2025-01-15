@@ -10,5 +10,5 @@ setcookie('cookie_username', "", time() - 3600, "/"); // Menghapus cookie userna
 setcookie('cookie_password', "", time() - 3600, "/"); // Menghapus cookie password
 
 // Redirect ke halaman login
-header("Location: /views/auth/login.php");
+header("Location: /views/landing_page/landing_page.php");
 exit();
