@@ -1,20 +1,26 @@
 <?php  
-session_start();  // Memulai session untuk menyimpan data user
+// Memulai session PHP untuk menyimpan data user antar halaman
+session_start();  
 
-// Konfigurasi koneksi database
-$host_db    = "localhost";    // Alamat host database
-$user_db    = "root";        // Username database
-$pass_db    = "";            // Password database 
-$nama_db    = "db_ajukan";   // Nama database
-$koneksi    = mysqli_connect($host_db, $user_db, $pass_db, $nama_db); // Membuat koneksi ke database
+// ===== KONFIGURASI DATABASE =====
+// Mendefinisikan konstanta untuk koneksi database
+$host_db    = "localhost";    // Alamat server database, localhost untuk pengembangan lokal
+$user_db    = "root";        // Username untuk mengakses database, default XAMPP adalah root
+$pass_db    = "";            // Password untuk mengakses database, default XAMPP adalah kosong
+$nama_db    = "db_ajukan";   // Nama database yang akan digunakan dalam aplikasi
+// Membuat koneksi ke database MySQL menggunakan fungsi mysqli_connect
+$koneksi    = mysqli_connect($host_db, $user_db, $pass_db, $nama_db); 
 
-// Cek apakah koneksi berhasil
+// Memeriksa apakah koneksi ke database berhasil
 if (!$koneksi) {
-    die("Koneksi gagal: " . mysqli_connect_error());  // Tampilkan pesan error jika koneksi gagal
+    // Jika koneksi gagal, hentikan program dan tampilkan pesan error
+    die("Koneksi gagal: " . mysqli_connect_error());  
 }
 
-// Fungsi untuk redirect berdasarkan role
+// ===== FUNGSI REDIRECT =====
+// Fungsi untuk mengarahkan user ke halaman yang sesuai berdasarkan role/peran
 function redirect_based_on_role($role) {
+    // Menentukan halaman tujuan berdasarkan role user
     if ($role == 'karyawan') {
         header("Location: /views/dashboard/karyawan/dashboard_karyawan.php");
     } elseif ($role == 'manajer') {
@@ -22,39 +28,45 @@ function redirect_based_on_role($role) {
     } elseif ($role == 'admin') {
         header("Location: /views/dashboard/admin/dashboard_admin.php");
     }
-    exit();
+    exit(); // Menghentikan eksekusi script setelah redirect
 }
 
-// Cek apakah user sudah login (session ada)
+// Memeriksa apakah user sudah login dengan mengecek session
 if (isset($_SESSION['session_username'])) {
+    // Jika sudah login, redirect ke halaman sesuai role
     redirect_based_on_role($_SESSION['session_role']);
 }
 
-// Inisialisasi variabel
-$err = ''; // Mendefinisikan variabel $err untuk menampung pesan error
-$username = isset($_POST['username']) ? $_POST['username'] : ''; // Input NIK/Email
-$password = isset($_POST['password']) ? $_POST['password'] : ''; // Input password
-$ingataku = isset($_POST['ingataku']) ? 1 : 0;                   // Checkbox "ingat saya"
+// ===== INISIALISASI VARIABEL =====
+$err = ''; // Variabel untuk menyimpan pesan error
+$username = isset($_POST['username']) ? $_POST['username'] : ''; // Mengambil input username/NIK dari form
+$password = isset($_POST['password']) ? $_POST['password'] : ''; // Mengambil input password dari form
+$ingataku = isset($_POST['ingataku']) ? 1 : 0;                  // Mengambil status checkbox "ingat saya"
 
-// Cek cookie untuk fitur "ingat saya"
+// ===== PENGECEKAN COOKIE =====
+// Memeriksa apakah ada cookie login tersimpan dan user belum login
 if (isset($_COOKIE['cookie_username']) && !isset($_SESSION['session_username'])) {
+    // Mengambil nilai cookie yang tersimpan
     $cookie_username = $_COOKIE['cookie_username'];
     $cookie_password = $_COOKIE['cookie_password'];
 
-    // Cek apakah input berupa email atau NIK
+    // Menentukan query berdasarkan format input (email atau NIK)
     if (filter_var($cookie_username, FILTER_VALIDATE_EMAIL)) {
-        $sql = "SELECT * FROM admin WHERE email = ?";
+        $sql = "SELECT * FROM admin WHERE email = ?"; // Query untuk admin (login dengan email)
     } else {
-        $sql = "SELECT * FROM user WHERE nik = ?";
+        $sql = "SELECT * FROM user WHERE nik = ?"; // Query untuk user (login dengan NIK)
     }
 
+    // Mempersiapkan dan mengeksekusi query dengan prepared statement untuk keamanan
     $stmt = mysqli_prepare($koneksi, $sql);
     mysqli_stmt_bind_param($stmt, "s", $cookie_username);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     $data = mysqli_fetch_array($result);
 
+    // Validasi password dari cookie
     if ($data && md5($data['password']) == $cookie_password) {
+        // Jika validasi berhasil, set session login
         $_SESSION['user_id'] = $data['user_id'] ?? $data['admin_id'];
         $_SESSION['session_username'] = $cookie_username;
         $_SESSION['session_role'] = $data['role'] ?? 'admin';
@@ -62,48 +74,55 @@ if (isset($_COOKIE['cookie_username']) && !isset($_SESSION['session_username']))
         $_SESSION['login_success'] = true;
         $_SESSION['session_nik'] = $data['nik'];
 
+        // Redirect ke halaman sesuai role
         redirect_based_on_role($_SESSION['session_role']);
     }
 }
 
-// Proses form login
+// ===== PROSES LOGIN =====
+// Memproses form login ketika tombol login ditekan
 if (isset($_POST['login'])) {
+    // Mengambil data dari form login
     $username = isset($_POST['username']) ? $_POST['username'] : '';
     $password = isset($_POST['password']) ? $_POST['password'] : '';
     $ingataku = isset($_POST['ingataku']) ? 1 : 0;
 
-    // Validasi form
+    // Validasi input form
     if ($username == '' || $password == '') {
         $err .= "<li>Silakan masukkan NIK/Email dan password.</li>";
     } else {
-        // Determine if input is email or NIK
+        // Menentukan query berdasarkan format input (email atau NIK)
         if (filter_var($username, FILTER_VALIDATE_EMAIL)) {
             $sql = "SELECT * FROM admin WHERE email = ?";
         } else {
             $sql = "SELECT * FROM user WHERE nik = ?";
         }
 
+        // Menggunakan prepared statement untuk keamanan
         $stmt = mysqli_prepare($koneksi, $sql);
         mysqli_stmt_bind_param($stmt, "s", $username);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
         $data = mysqli_fetch_array($result);
 
+        // Validasi keberadaan user
         if (!$data) {
             $err .= "<li>Username/Email tidak ditemukan.</li>";
         } else {
             $loginSuccess = false;
 
-            // Try password_verify first
+            // Mencoba verifikasi password dengan password_verify
             if (password_verify($password, $data['password'])) {
                 $loginSuccess = true;
             } 
-            // If that fails and it's a user account, try MD5
+            // Jika gagal dan user bukan admin, coba dengan MD5 (untuk kompatibilitas)
             else if (!filter_var($username, FILTER_VALIDATE_EMAIL) && md5($password) === $data['password']) {
                 $loginSuccess = true;
             }
 
+            // Jika login berhasil
             if ($loginSuccess) {
+                // Set session untuk user yang login
                 $_SESSION['user_id'] = $data['user_id'] ?? $data['admin_id'];
                 $_SESSION['session_username'] = $username;
                 $_SESSION['session_role'] = $data['role'] ?? 'admin';
@@ -111,11 +130,13 @@ if (isset($_POST['login'])) {
                 $_SESSION['session_nik'] = $data['nik'] ?? null;
                 $_SESSION['login_success'] = true;
 
+                // Jika checkbox "ingat saya" dicentang, set cookie
                 if ($ingataku == 1) {
                     setcookie('cookie_username', $username, time() + (60 * 60 * 24 * 30), "/");
                     setcookie('cookie_password', md5($password), time() + (60 * 60 * 24 * 30), "/");
                 }
 
+                // Redirect ke halaman sesuai role
                 redirect_based_on_role($_SESSION['session_role']);
             } else {
                 $err .= "<li>Password yang dimasukkan salah.</li>";
@@ -126,10 +147,10 @@ if (isset($_POST['login'])) {
 ?>
 
 <?php
-// Menampilkan notifikasi berhasil login jika session login_success ada
+// Menampilkan notifikasi sukses login jika ada session login_success
 if (isset($_SESSION['login_success']) && $_SESSION['login_success'] == true) {
     echo "<script>alert('Login berhasil!');</script>";
-    unset($_SESSION['login_success']);  // Menghapus session login_success setelah notifikasi ditampilkan
+    unset($_SESSION['login_success']);  // Menghapus session login_success setelah ditampilkan
 }
 ?>
 
