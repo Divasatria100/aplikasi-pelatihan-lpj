@@ -106,7 +106,7 @@ if ($result && $result->num_rows > 0) {
                     $sqlUpdate = "
                         UPDATE usulan_pelatihan SET 
                             lpj_file = '$fileName',
-                            lpj_status = 'On Progress',
+                            lpj_status = 'Sedang Ditinjau',
                             lpj_submitted = 1,
                             tanggal_upload = NOW()
                         WHERE id = $id

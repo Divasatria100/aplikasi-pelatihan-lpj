@@ -94,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $conn->prepare("INSERT INTO usulan_pelatihan (user_id, judul_pelatihan, jenis_pelatihan, nama_peserta, 
                               lembaga, jurusan_id, program_studi_id, tanggal_mulai, tanggal_selesai, tempat, sumber_dana, 
                               manajer_pembimbing, target, status, lpj_status) 
-                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'On Progress', 'Belum Diajukan')");
+                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Sedang Ditinjau', 'Belum Diajukan')");
         
         $nama_peserta = isset($_POST['namaPeserta']) ? implode(", ", array_map('htmlspecialchars', $_POST['namaPeserta'])) : '';
         

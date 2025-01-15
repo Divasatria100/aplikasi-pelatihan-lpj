@@ -219,31 +219,31 @@ mysqli_close($koneksi); // Menutup koneksi database
                             <!-- Status LPJ -->
                             <td>
                                 <?php if ($row['status'] === 'Disetujui' && !$row['lpj_submitted']) { ?>
-                                    <span class="status waiting"><i class="fas fa-clock"></i> Waiting</span>
-                                <?php } elseif ($row['lpj_status'] === 'On Progress') { ?>
-                                    <span class="status on-progress"><i class="fas fa-spinner"></i> On Progress</span>
+                                    <span class="status waiting"><i class="fas fa-circle"></i> Menunggu</span>
+                                <?php } elseif ($row['lpj_status'] === 'Sedang Ditinjau') { ?>
+                                    <span class="status onprogress"><i class="fas fa-circle"></i> Sedang Ditinjau</span>
                                 <?php } elseif ($row['lpj_status'] === 'Disetujui') { ?>
-                                    <span class="status disetujui"><i class="fas fa-check-circle"></i> Disetujui</span>
+                                    <span class="status disetujui"><i class="fas fa-circle"></i> Disetujui</span>
                                 <?php } elseif ($row['lpj_status'] === 'Revisi') { ?>
-                                    <span class="status revisi"><i class="fas fa-times-circle"></i> Revisi</span>
+                                    <span class="status revisi"><i class="fas fa-circle"></i> Revisi</span>
                                 <?php } else { ?>
-                                    <span class="status pending"><i class="fas fa-clock"></i> Belum Diajukan</span>
+                                    <span class="status pending"><i class="fas fa-circle"></i> Belum Diajukan</span>
                                 <?php } ?>
                             </td>
                             <!-- Kolom LPJ -->
                             <td>
                                 <?php if ($row['status'] === 'Disetujui') { 
-                                    if ($row['lpj_submitted'] && $row['lpj_status'] === 'On Progress') { ?>
+                                    if ($row['lpj_submitted'] && $row['lpj_status'] === 'Sedang Ditinjau') { ?>
                                         <a href="/views/user/lpj_manajer.php?id=<?= urlencode($row['id']) ?>" class="lpjButton">Review</a>
                                     <?php } elseif ($row['lpj_status'] === 'Disetujui') { ?>
                                         <a href="/views/user/lpj_manajer.php?id=<?= urlencode($row['id']) ?>" class="detailButton">Detail</a>
                                     <?php } elseif ($row['lpj_status'] === 'Revisi') { ?>
-                                        <span class="status revisi"><i class="fas fa-times-circle"></i> Revisi</span>
+                                        <span class="status revisi"><i class="fas fa-circle"></i> Revisi</span>
                                     <?php } else { ?>
-                                        <span class="status waiting"><i class="fas fa-clock"></i> Waiting</span>
+                                        <span class="status waiting"><i class="fas fa-circle"></i> Menunggu</span>
                                     <?php }
                                 } else { ?>
-                                    <span class="status pending"><i class="fas fa-clock"></i> Belum Diajukan</span>
+                                    <span class="status pending"><i class="fas fa-circle"></i> Belum Diajukan</span>
                                 <?php } ?>
                             </td>
                             <td>

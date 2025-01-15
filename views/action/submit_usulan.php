@@ -78,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Cek apakah request yang diterima 
         '$manajerPembimbing',
         '$target',
         '$user_id',
-        'On Progress', 
+        'Sedang Ditinjau', 
         'Belum Diajukan',
         '$jurusanId',
         '$programStudiId'
